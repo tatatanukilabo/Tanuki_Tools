@@ -15,7 +15,7 @@ def render():
             st.success("✅ JSONの読み込みに成功しました")
 
             st.markdown("### 🎁 ギフト一覧")
-            cols = st.columns(2)
+            cols = st.columns(4)  # 🔄 列数を4に変更
             result_data = {}
 
             for i, filename in enumerate(goal_data):
@@ -23,7 +23,7 @@ def render():
                 try:
                     with open(path, "rb") as f:
                         img = Image.open(io.BytesIO(f.read()))
-                        with cols[i % 2]:
+                        with cols[i % 4]:  # 🔄 ここも4に変更
                             st.image(img, caption=filename, width=200)
 
                             goal = goal_data[filename]["goal"]
@@ -42,7 +42,6 @@ def render():
                             st.markdown(f"📦 もらった数: `{received}`")
                             st.markdown(f"{'✅' if status == '達成' else '❌'} {status}")
 
-
                             result_data[filename] = {
                                 "goal": goal,
                                 "received": received,
@@ -50,7 +49,7 @@ def render():
                             }
 
                 except Exception as e:
-                    with cols[i % 2]:
+                    with cols[i % 4]:
                         st.warning(f"{filename} の表示に失敗しました: {e}")
 
             # 結果の表示とダウンロード
@@ -71,4 +70,3 @@ def render():
 
 if __name__ == "__main__":
     render()
-
