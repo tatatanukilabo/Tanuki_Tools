@@ -35,6 +35,7 @@
             fetch("Home.py").then(res => res.text()),
             fetch("pages/Page1.py").then(res => res.text()),
             fetch("pages/Page2.py").then(res => res.text()),
+            fetch("pages/Page3.py").then(res => res.text()),
             fetch("assets/icons/icon.png").then(res => res.arrayBuffer()),
             fetch("assets/icons/check.png").then(res => res.arrayBuffer())
           ];
@@ -45,13 +46,14 @@
           );
 
           Promise.all([...baseFetches, ...imageFetches])
-            .then(([HomeCode, page1Code, page2Code, iconBuffer, checkBuffer, ...imageBuffers]) => {
+            .then(([HomeCode, page1Code, page2Code, page3Code, iconBuffer, checkBuffer, ...imageBuffers]) => {
               const iconBytes = new Uint8Array(iconBuffer);
               const checkBytes = new Uint8Array(checkBuffer);
               const files = {
                 "Home.py": HomeCode,
                 "pages/Page1.py": page1Code,
                 "pages/Page2.py": page2Code,
+                "pages/Page3.py": page3Code,
                 "assets/icons/icon.png": iconBytes,
                 "assets/icons/check.png": checkBytes,
                 "assets/data/list.json": new TextEncoder().encode(listJsonText) // ← Pythonで open() 可能に
@@ -74,5 +76,6 @@
   </body>
 
 </html>
+
 
 
