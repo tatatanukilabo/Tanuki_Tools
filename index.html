@@ -47,6 +47,7 @@
           Promise.all([...baseFetches, ...imageFetches])
             .then(([HomeCode, page1Code, page2Code, iconBuffer, checkBuffer, ...imageBuffers]) => {
               const iconBytes = new Uint8Array(iconBuffer);
+              const checkBytes = new Uint8Array(checkBuffer);
               const files = {
                 "Home.py": HomeCode,
                 "pages/Page1.py": page1Code,
@@ -73,4 +74,5 @@
   </body>
 
 </html>
+
 
