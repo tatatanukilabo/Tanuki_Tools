@@ -14,8 +14,12 @@ def render():
             goal_data = json.load(uploaded_file)
             st.success("✅ JSONの読み込みに成功しました")
 
+            # 🔧 列数選択（1〜8）
+            st.markdown("---")
+            col_count = st.selectbox("表示する列数を選択してください", options=list(range(1, 9)), index=3)
+
             st.markdown("### 🎁 ギフト一覧")
-            cols = st.columns(4)
+            cols = st.columns(col_count)
             result_data = {}
 
             total_items = len(goal_data)
@@ -26,7 +30,7 @@ def render():
                 try:
                     with open(path, "rb") as f:
                         img = Image.open(io.BytesIO(f.read()))
-                        with cols[i % 4]:
+                        with cols[i % col_count]:
                             st.image(img, caption=filename, width=150)
 
                             goal = goal_data[filename].get("goal", 0)
@@ -47,7 +51,6 @@ def render():
                             safe_ratio = min(progress_ratio, 1.0)
 
                             st.markdown(f"🎯 目標: `{goal}`")
-                            # st.markdown(f"📦 もらった数: `{received}`")
                             st.markdown(f"{'✅' if status == '達成' else '❌'} {status}")
                             st.progress(safe_ratio)
                             st.markdown(f"📈 達成率: `{progress_percent}%`")
@@ -62,10 +65,10 @@ def render():
                                 achieved_count += 1
 
                 except Exception as e:
-                    with cols[i % 4]:
+                    with cols[i % col_count]:
                         st.warning(f"{filename} の表示に失敗しました: {e}")
 
-            # 全体の達成率表示
+            # 📊 全体の達成率表示
             st.markdown("---")
             st.markdown("### 📊 全体の達成状況")
             overall_ratio = achieved_count / total_items if total_items > 0 else 0
@@ -74,7 +77,7 @@ def render():
             st.progress(overall_ratio)
             st.markdown(f"📈 全体達成率: `{overall_percent}%`")
 
-            # 結果の表示とダウンロード
+            # 📤 結果の表示とダウンロード
             st.markdown("---")
             st.markdown("### 📤 結果のJSON表示とダウンロード")
             result_json = json.dumps(result_data, ensure_ascii=False, indent=2)
