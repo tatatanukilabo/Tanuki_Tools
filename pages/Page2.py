@@ -23,24 +23,30 @@ def render():
                 try:
                     with open(path, "rb") as f:
                         img = Image.open(io.BytesIO(f.read()))
-                        with cols[i % 4]:  # 🔄 ここも4に変更
+                        with cols[i % 4]:
                             st.image(img, caption=filename, width=150)
 
-                            goal = goal_data[filename]["goal"]
-                            input_key = f"received_{filename}"
+                            goal = goal_data[filename].get("goal", 0)
+                            default_received = goal_data[filename].get("received", 0)
 
+                            input_key = f"received_{filename}"
                             received = st.number_input(
                                 f"{filename} のもらった数",
                                 min_value=0,
-                                value=goal_data[filename]["received"],
+                                value=default_received,
                                 step=1,
                                 key=input_key
                             )
 
-                            status = "達成" if received >= goal else "未達"
+                            status = "達成" if received >= goal and goal > 0 else "未達"
+                            progress_ratio = received / goal if goal > 0 else 0
+                            progress_percent = int(progress_ratio * 100)
+
                             st.markdown(f"🎯 目標: `{goal}`")
-                            # st.markdown(f"📦 もらった数: `{received}`")
+                            st.markdown(f"📦 もらった数: `{received}`")
                             st.markdown(f"{'✅' if status == '達成' else '❌'} {status}")
+                            st.progress(progress_ratio)
+                            st.markdown(f"📈 達成率: `{progress_percent}%`")
 
                             result_data[filename] = {
                                 "goal": goal,
@@ -53,24 +59,20 @@ def render():
                         st.warning(f"{filename} の表示に失敗しました: {e}")
 
             # 結果の表示とダウンロード
-            if result_data:
-                st.markdown("### 📤 結果のJSON表示とダウンロード")
-                result_json = json.dumps(result_data, ensure_ascii=False, indent=2)
-                st.code(result_json, language="json")
+            st.markdown("---")
+            st.markdown("### 📤 結果のJSON表示とダウンロード")
+            result_json = json.dumps(result_data, ensure_ascii=False, indent=2)
+            st.code(result_json, language="json")
 
-                st.download_button(
-                    label="📥 結果をJSONでダウンロード",
-                    data=result_json.encode("utf-8"),
-                    file_name="gift_result.json",
-                    mime="application/json"
-                )
+            st.download_button(
+                label="📥 結果をJSONでダウンロード",
+                data=result_json.encode("utf-8"),
+                file_name="gift_result.json",
+                mime="application/json"
+            )
 
         except json.JSONDecodeError:
             st.error("❌ JSONの形式が正しくありません")
 
 if __name__ == "__main__":
     render()
-
-
-
-
