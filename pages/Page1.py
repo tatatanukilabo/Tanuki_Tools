@@ -37,31 +37,28 @@ def render():
                 st.warning(f"{name} の表示に失敗しました: {e}")
 
     st.markdown("---")
-    if st.button("📦 カウント結果をまとめる"):
-        # 目標数が0より大きいものだけを抽出し、指定形式で構造化
-        result = {
-            name: {
-                "goal": count,
-                "received": 0,
-                "status": "未達"
-            }
-            for name, count in counts.items() if count > 0
+    st.markdown("### ✅ カウント結果（JSON）")
+
+    # 目標数が0より大きいものだけを抽出し、指定形式で構造化
+    result = {
+        name: {
+            "goal": count,
+            "received": 0,
+            "status": "未達"
         }
+        for name, count in counts.items() if count > 0
+    }
 
-        if result:
-            st.markdown("### ✅ カウント結果（JSON）")
-            st.json(result)
+    st.json(result)
 
-            # JSON文字列に変換してダウンロードボタンを表示
-            json_str = json.dumps(result, indent=2, ensure_ascii=False)
-            st.download_button(
-                label="📥 JSONをダウンロード",
-                data=json_str,
-                file_name="gift_goals.json",
-                mime="application/json"
-            )
-        else:
-            st.info("0以外の目標数がありません。")
+    # JSON文字列に変換してダウンロードボタンを表示（空でも表示）
+    json_str = json.dumps(result, indent=2, ensure_ascii=False)
+    st.download_button(
+        label="📥 JSONをダウンロード",
+        data=json_str,
+        file_name="gift_goals.json",
+        mime="application/json"
+    )
 
 # stlite 実行時のエントリポイント
 if __name__ == "__main__":
