@@ -25,8 +25,9 @@ def render():
         """,
         unsafe_allow_html=True
     )
-    st.write("開発中。")
+    st.write("開発中。左上のボタンからサイドバーを開いてpage1から順に")
 
 if __name__ == "__main__":
 
     render()
+
