@@ -15,8 +15,11 @@ def render():
             st.success("✅ JSONの読み込みに成功しました")
 
             st.markdown("### 🎁 ギフト一覧")
-            cols = st.columns(4)  # 列数を4に設定
+            cols = st.columns(4)
             result_data = {}
+
+            total_items = len(goal_data)
+            achieved_count = 0
 
             for i, filename in enumerate(goal_data):
                 path = os.path.join("assets", "data", filename)
@@ -26,7 +29,6 @@ def render():
                         with cols[i % 4]:
                             st.image(img, caption=filename, width=150)
 
-                            # 中断ファイルから目標と進捗を取得
                             goal = goal_data[filename].get("goal", 0)
                             default_received = goal_data[filename].get("received", 0)
 
@@ -39,29 +41,38 @@ def render():
                                 key=input_key
                             )
 
-                            # 達成状況と進捗率の計算
                             status = "達成" if received >= goal and goal > 0 else "未達"
                             progress_ratio = received / goal if goal > 0 else 0
                             progress_percent = int(progress_ratio * 100)
                             safe_ratio = min(progress_ratio, 1.0)
 
-                            # 表示
                             st.markdown(f"🎯 目標: `{goal}`")
-                            st.markdown(f"📦 もらった数: `{received}`")
+                            # st.markdown(f"📦 もらった数: `{received}`")
                             st.markdown(f"{'✅' if status == '達成' else '❌'} {status}")
                             st.progress(safe_ratio)
                             st.markdown(f"📈 達成率: `{progress_percent}%`")
 
-                            # 結果を保存
                             result_data[filename] = {
                                 "goal": goal,
                                 "received": received,
                                 "status": status
                             }
 
+                            if status == "達成":
+                                achieved_count += 1
+
                 except Exception as e:
                     with cols[i % 4]:
                         st.warning(f"{filename} の表示に失敗しました: {e}")
+
+            # 全体の達成率表示
+            st.markdown("---")
+            st.markdown("### 📊 全体の達成状況")
+            overall_ratio = achieved_count / total_items if total_items > 0 else 0
+            overall_percent = int(overall_ratio * 100)
+            st.markdown(f"✅ 達成ギフト数: `{achieved_count}` / `{total_items}`")
+            st.progress(overall_ratio)
+            st.markdown(f"📈 全体達成率: `{overall_percent}%`")
 
             # 結果の表示とダウンロード
             st.markdown("---")
