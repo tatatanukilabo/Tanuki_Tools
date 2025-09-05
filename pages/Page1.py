@@ -61,15 +61,17 @@ def render():
     st.markdown("---")
     st.markdown("### ✅ 目標数集計結果（JSON）")
 
-    # 目標数が0より大きいものだけを抽出し、指定形式で構造化
-    result = {
-        name: {
-            "goal": count,
-            "received": 0,
-            "status": "未達"
-        }
-        for name, count in counts.items() if count > 0
-    }
+    # 中断データがあれば received/status を復元、それ以外は初期値
+    result = {}
+    for name, count in counts.items():
+        if count > 0:
+            received = resume_data.get(name, {}).get("received", 0)
+            status = resume_data.get(name, {}).get("status", "未達")
+            result[name] = {
+                "goal": count,
+                "received": received,
+                "status": status
+            }
 
     st.json(result)
 
@@ -85,7 +87,3 @@ def render():
 # stlite 実行時のエントリポイント
 if __name__ == "__main__":
     render()
-
-
-
-
