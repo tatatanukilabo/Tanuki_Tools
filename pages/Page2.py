@@ -26,13 +26,13 @@ def render():
                         with cols[i % 2]:
                             st.image(img, caption=filename, width=200)
 
-                            goal = goal_data[filename]
+                            goal = goal_data[filename]["goal"]
                             input_key = f"received_{filename}"
 
                             received = st.number_input(
                                 f"{filename} のもらった数",
                                 min_value=0,
-                                value=0,
+                                value=goal_data[filename]["received"],
                                 step=1,
                                 key=input_key
                             )
