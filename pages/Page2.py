@@ -39,7 +39,7 @@ def render():
 
                             status = "達成" if received >= goal else "未達"
                             st.markdown(f"🎯 目標: `{goal}`")
-                            st.markdown(f"📦 もらった数: `{received}`")
+                            # st.markdown(f"📦 もらった数: `{received}`")
                             st.markdown(f"{'✅' if status == '達成' else '❌'} {status}")
 
                             result_data[filename] = {
@@ -70,6 +70,7 @@ def render():
 
 if __name__ == "__main__":
     render()
+
 
 
 
