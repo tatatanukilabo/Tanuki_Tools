@@ -24,7 +24,7 @@ def render():
                     with open(path, "rb") as f:
                         img = Image.open(io.BytesIO(f.read()))
                         with cols[i % 4]:  # 🔄 ここも4に変更
-                            st.image(img, caption=filename, width=100)
+                            st.image(img, caption=filename, width=75)
 
                             goal = goal_data[filename]["goal"]
                             input_key = f"received_{filename}"
@@ -70,4 +70,5 @@ def render():
 
 if __name__ == "__main__":
     render()
+
 
