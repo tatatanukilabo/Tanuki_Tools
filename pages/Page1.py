@@ -18,6 +18,19 @@ def render():
 
     st.markdown("### 🎁 ギフト画像一覧")
 
+    # 🔽 中断ファイルの読み込み（初期値に反映）
+    st.markdown("---")
+    st.markdown("### 📥 中断ファイル（JSON）を読み込む")
+    resume_file = st.file_uploader("中断ファイルをアップロード", type="json", key="resume")
+
+    resume_data = {}
+    if resume_file:
+        try:
+            resume_data = json.load(resume_file)
+            st.success("✅ 中断ファイルを読み込みました")
+        except json.JSONDecodeError:
+            st.error("❌ 中断ファイルの形式が正しくありません")
+
     # 入力値を保持する辞書
     counts = {}
 
@@ -28,9 +41,18 @@ def render():
         try:
             with open(path, "rb") as f:
                 img = Image.open(io.BytesIO(f.read()))
-                with cols[i % 4]:  # ← ここも4に変更
+                with cols[i % 4]:
                     st.image(img, caption=name, width=200)
-                    count = st.number_input(f"{name} の目標数", min_value=0, value=0, key=name)
+
+                    # 中断ファイルに目標があれば初期値に反映
+                    default_goal = resume_data.get(name, {}).get("goal", 0)
+
+                    count = st.number_input(
+                        f"{name} の目標数",
+                        min_value=0,
+                        value=default_goal,
+                        key=name
+                    )
                     counts[name] = count
         except Exception as e:
             with cols[i % 4]:
