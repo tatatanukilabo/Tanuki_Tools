@@ -4,6 +4,8 @@ const urlsToCache = [
   "/Home.py",
   "/manifest.json",
   "/pages/Page1.py",
+  "/pages/Page2.py",
+  "/pages/Page3.py",
   "/assets/icons/icon.png",
   "/assets/icons/icon-192.png",
   "/assets/icons/icon-512.png",
@@ -34,6 +36,7 @@ self.addEventListener("fetch", event => {
     fetch(event.request).catch(() => caches.match(event.request))
   );
 });
+
 
 
 
