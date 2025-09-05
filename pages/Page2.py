@@ -5,7 +5,6 @@ import json
 
 def render():
     st.markdown("## 🎯 ギフト目標と達成状況")
-    st.write("このアプリは stlite を使って構築されています。")
 
     uploaded_file = st.file_uploader("📥 ギフト目標データ（JSON）をアップロード", type="json")
 
@@ -49,4 +48,5 @@ def render():
             st.error("❌ JSONの形式が正しくありません")
 
 if __name__ == "__main__":
+
     render()
