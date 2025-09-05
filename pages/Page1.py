@@ -2,6 +2,7 @@ import streamlit as st
 from PIL import Image
 import io
 import json
+import os
 
 def render():
     st.markdown("## 🧮 リストアップギフト")
@@ -23,13 +24,13 @@ def render():
     # 2列レイアウトで画像と数値入力（幅200pxに固定）
     cols = st.columns(2)
     for i, name in enumerate(image_names):
-        path = f"assets/data/{name}"
+        path = os.path.join("assets", "data", name)
         try:
             with open(path, "rb") as f:
                 img = Image.open(io.BytesIO(f.read()))
                 with cols[i % 2]:
                     st.image(img, caption=name, width=200)
-                    count = st.number_input(f"{name} の個数", min_value=0, value=0, key=name)
+                    count = st.number_input(f"{name} の目標数", min_value=0, value=0, key=name)
                     counts[name] = count
         except Exception as e:
             with cols[i % 2]:
@@ -37,7 +38,16 @@ def render():
 
     st.markdown("---")
     if st.button("📦 カウント結果をまとめる"):
-        result = {name: count for name, count in counts.items() if count > 0}
+        # 目標数が0より大きいものだけを抽出し、指定形式で構造化
+        result = {
+            name: {
+                "goal": count,
+                "received": 0,
+                "status": "未達"
+            }
+            for name, count in counts.items() if count > 0
+        }
+
         if result:
             st.markdown("### ✅ カウント結果（JSON）")
             st.json(result)
@@ -47,13 +57,12 @@ def render():
             st.download_button(
                 label="📥 JSONをダウンロード",
                 data=json_str,
-                file_name="gift_counts.json",
+                file_name="gift_goals.json",
                 mime="application/json"
             )
         else:
-            st.info("0以外のカウントがありません。")
+            st.info("0以外の目標数がありません。")
 
 # stlite 実行時のエントリポイント
 if __name__ == "__main__":
-
     render()
