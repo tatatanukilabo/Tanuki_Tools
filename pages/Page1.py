@@ -42,7 +42,7 @@ def render():
             with open(path, "rb") as f:
                 img = Image.open(io.BytesIO(f.read()))
                 with cols[i % 4]:
-                    st.image(img, caption=name, width=200)
+                    st.image(img, caption=name, width=100)
 
                     # 中断ファイルに目標があれば初期値に反映
                     default_goal = resume_data.get(name, {}).get("goal", 0)
@@ -85,3 +85,4 @@ def render():
 # stlite 実行時のエントリポイント
 if __name__ == "__main__":
     render()
+
