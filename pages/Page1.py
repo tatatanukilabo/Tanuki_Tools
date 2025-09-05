@@ -21,7 +21,7 @@ def render():
 
             images = []
             tile_size = (150, 150)
-            check_path = os.path.join("assets", "icon", "check.png")
+            check_path = os.path.join("assets", "icons", "check.png")
             check_img = Image.open(check_path).convert("RGBA").resize((40, 40))
 
             for i, filename in enumerate(gift_data):
@@ -69,4 +69,5 @@ def render():
 
 if __name__ == "__main__":
     render()
+
 
