@@ -25,7 +25,8 @@ def render():
         """,
         unsafe_allow_html=True
     )
-    st.write("これは stlite で構築されたホームページです。")
+    st.write("開発中。")
 
 if __name__ == "__main__":
+
     render()
