@@ -7,6 +7,7 @@ const urlsToCache = [
   "/assets/icons/icon.png",
   "/assets/icons/icon-192.png",
   "/assets/icons/icon-512.png",
+  "/assets/icons/check.png",
   "https://cdn.jsdelivr.net/npm/@stlite/mountable@0.58.3/build/stlite.js",
   "https://cdn.jsdelivr.net/npm/@stlite/mountable@0.58.3/build/stlite.css"
 ];
@@ -33,5 +34,6 @@ self.addEventListener("fetch", event => {
     fetch(event.request).catch(() => caches.match(event.request))
   );
 });
+
 
 
