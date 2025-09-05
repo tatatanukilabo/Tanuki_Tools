@@ -8,7 +8,7 @@ def render():
     st.markdown("## 🧮 ギフト目標設定")
     st.write("各ギフトの目標数を設定してください。")
 
-    # list.json を読み込む
+    # 📂 list.json を読み込む
     try:
         with open("assets/data/list.json", "r") as f:
             image_names = json.load(f)
@@ -16,7 +16,7 @@ def render():
         st.error(f"画像一覧の読み込みに失敗しました: {e}")
         return
 
-    # 🔽 中断ファイルの読み込み（初期値に反映）
+    # 📥 中断ファイルの読み込み（初期値に反映）
     st.markdown("---")
     st.markdown("### 📥 中断ファイル（JSON）を読み込む")
     resume_file = st.file_uploader("中断ファイルをアップロード", type="json", key="resume")
@@ -29,20 +29,23 @@ def render():
         except json.JSONDecodeError:
             st.error("❌ 中断ファイルの形式が正しくありません")
 
+    # 🔧 列数をユーザーが選択できるようにする（1〜8）
+    st.markdown("---")
+    col_count = st.selectbox("表示する列数を選択してください", options=list(range(1, 9)), index=3)
+
     # 入力値を保持する辞書
     counts = {}
 
-    # 🔄 列数を4に変更
-    cols = st.columns(4)
+    # 🎨 ギフト画像と目標数入力
+    cols = st.columns(col_count)
     for i, name in enumerate(image_names):
         path = os.path.join("assets", "data", name)
         try:
             with open(path, "rb") as f:
                 img = Image.open(io.BytesIO(f.read()))
-                with cols[i % 4]:
+                with cols[i % col_count]:
                     st.image(img, caption=name, width=150)
 
-                    # 中断ファイルに目標があれば初期値に反映
                     default_goal = resume_data.get(name, {}).get("goal", 0)
 
                     count = st.number_input(
@@ -53,13 +56,13 @@ def render():
                     )
                     counts[name] = count
         except Exception as e:
-            with cols[i % 4]:
+            with cols[i % col_count]:
                 st.warning(f"{name} の表示に失敗しました: {e}")
 
+    # 📊 集計結果の表示
     st.markdown("---")
     st.markdown("### ✅ 目標数集計結果（JSON）")
 
-    # 中断データがあれば received/status を復元、それ以外は初期値
     result = {}
     for name, count in counts.items():
         if count > 0:
@@ -73,7 +76,7 @@ def render():
 
     st.json(result)
 
-    # JSON文字列に変換してダウンロードボタンを表示（空でも表示）
+    # 📥 JSONダウンロードボタン
     json_str = json.dumps(result, indent=2, ensure_ascii=False)
     st.download_button(
         label="📥 JSONをダウンロード",
@@ -85,4 +88,3 @@ def render():
 # stlite 実行時のエントリポイント
 if __name__ == "__main__":
     render()
-
