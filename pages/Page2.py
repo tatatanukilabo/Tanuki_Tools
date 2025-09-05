@@ -1,52 +1,49 @@
-import streamlit as st
-from PIL import Image
-import io
-import json
+# 結果を保存する辞書
+result_data = {}
 
-def render():
-    st.markdown("## 🎯 ギフト目標と達成状況")
+# ギフト一覧のループ内で、結果を収集
+for i, filename in enumerate(goal_data):
+    path = f"assets/data/{filename}"
+    try:
+        with open(path, "rb") as f:
+            img = Image.open(io.BytesIO(f.read()))
+            with cols[i % 2]:
+                st.image(img, caption=filename, width=200)
 
-    uploaded_file = st.file_uploader("📥 ギフト目標データ（JSON）をアップロード", type="json")
+                goal = goal_data[filename]
+                input_key = f"received_{filename}"
 
-    if uploaded_file:
-        try:
-            goal_data = json.load(uploaded_file)
-            st.success("✅ JSONの読み込みに成功しました")
+                received = st.number_input(
+                    f"{filename} のもらった数",
+                    min_value=0,
+                    value=0,
+                    step=1,
+                    key=input_key
+                )
 
-            st.markdown("### 🎁 ギフト一覧")
-            cols = st.columns(2)
+                status = "達成" if received >= goal else "未達"
+                st.markdown(f"🎯 目標: `{goal}`　｜　📦 もらった数: `{received}`　｜　{'✅' if status == '達成' else '❌'} {status}")
 
-            for i, filename in enumerate(goal_data):
-                path = f"assets/data/{filename}"
-                try:
-                    with open(path, "rb") as f:
-                        img = Image.open(io.BytesIO(f.read()))
-                        with cols[i % 2]:
-                            st.image(img, caption=filename, width=200)
+                # 結果を辞書に追加
+                result_data[filename] = {
+                    "goal": goal,
+                    "received": received,
+                    "status": status
+                }
 
-                            goal = goal_data[filename]
-                            input_key = f"received_{filename}"
+    except Exception as e:
+        with cols[i % 2]:
+            st.warning(f"{filename} の表示に失敗しました: {e}")
 
-                            # もらった数の入力（0以上）
-                            received = st.number_input(
-                                f"{filename} のもらった数",
-                                min_value=0,
-                                value=0,
-                                step=1,
-                                key=input_key
-                            )
+# 結果のJSON表示とダウンロード
+if result_data:
+    st.markdown("### 📤 結果のJSON表示とダウンロード")
+    result_json = json.dumps(result_data, ensure_ascii=False, indent=2)
+    st.code(result_json, language="json")
 
-                            # 達成状況の表示
-                            status = "✅ 達成" if received >= goal else "❌ 未達"
-                            st.markdown(f"🎯 目標: `{goal}`　｜　📦 もらった数: `{received}`　｜　{status}")
-
-                except Exception as e:
-                    with cols[i % 2]:
-                        st.warning(f"{filename} の表示に失敗しました: {e}")
-
-        except json.JSONDecodeError:
-            st.error("❌ JSONの形式が正しくありません")
-
-if __name__ == "__main__":
-
-    render()
+    st.download_button(
+        label="📥 結果をJSONでダウンロード",
+        data=result_json.encode("utf-8"),
+        file_name="gift_result.json",
+        mime="application/json"
+    )
