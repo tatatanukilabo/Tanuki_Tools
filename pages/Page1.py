@@ -21,23 +21,23 @@ def render():
     # 入力値を保持する辞書
     counts = {}
 
-    # 2列レイアウトで画像と数値入力（幅200pxに固定）
-    cols = st.columns(2)
+    # 🔄 列数を4に変更
+    cols = st.columns(4)
     for i, name in enumerate(image_names):
         path = os.path.join("assets", "data", name)
         try:
             with open(path, "rb") as f:
                 img = Image.open(io.BytesIO(f.read()))
-                with cols[i % 2]:
+                with cols[i % 4]:  # ← ここも4に変更
                     st.image(img, caption=name, width=200)
                     count = st.number_input(f"{name} の目標数", min_value=0, value=0, key=name)
                     counts[name] = count
         except Exception as e:
-            with cols[i % 2]:
+            with cols[i % 4]:
                 st.warning(f"{name} の表示に失敗しました: {e}")
 
     st.markdown("---")
-    st.markdown("### ✅ カウント結果（JSON）")
+    st.markdown("### ✅ 目標数集計結果（JSON）")
 
     # 目標数が0より大きいものだけを抽出し、指定形式で構造化
     result = {
