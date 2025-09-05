@@ -3,82 +3,86 @@ from PIL import Image
 import io
 import json
 import os
-import math
 
 def render():
-    st.markdown("## 🖼️ ギフト進捗確認画像作成アプリ")
+    st.markdown("## 🧮 ギフト目標設定")
+    st.write("各ギフトの目標数を設定してください。")
 
-    uploaded_file = st.file_uploader("📥 ギフト進捗データ（JSON）をアップロード", type="json")
+    # list.json を読み込む
+    try:
+        with open("assets/data/list.json", "r") as f:
+            image_names = json.load(f)
+    except Exception as e:
+        st.error(f"画像一覧の読み込みに失敗しました: {e}")
+        return
 
-    if uploaded_file:
+    # 🔽 中断ファイルの読み込み（初期値に反映）
+    st.markdown("---")
+    st.markdown("### 📥 中断ファイル（JSON）を読み込む")
+    resume_file = st.file_uploader("中断ファイルをアップロード", type="json", key="resume")
+
+    resume_data = {}
+    if resume_file:
         try:
-            gift_data = json.load(uploaded_file)
-            st.success("✅ JSONの読み込みに成功しました")
-
-            st.markdown("### 🎁 ギフト一覧プレビュー")
-            cols = st.columns(4)
-
-            images = []
-            tile_size = (150, 150)
-
-            # ✅ チェックマーク画像の読み込み（サイズ変更なし）
-            try:
-                check_path = os.path.join("assets", "icons", "check.png")
-                with open(check_path, "rb") as f:
-                    check_img = Image.open(f).convert("RGBA")
-            except FileNotFoundError:
-                st.warning("⚠️ チェックマーク画像が見つかりません。重ね処理はスキップされます。")
-                check_img = None
-
-            for i, filename in enumerate(gift_data):
-                path = os.path.join("assets", "data", filename)
-                try:
-                    with open(path, "rb") as f:
-                        img = Image.open(f).convert("RGBA").resize(tile_size)
-
-                        # ✅ 達成ステータスならチェックマークを中央に重ねる
-                        if gift_data[filename].get("status") == "達成" and check_img:
-                            cx = (tile_size[0] - check_img.width) // 2
-                            cy = (tile_size[1] - check_img.height) // 2
-                            img.paste(check_img, (cx, cy), check_img)
-
-                        images.append(img)
-
-                        with cols[i % 4]:
-                            st.image(img, caption=filename, width=150)
-
-                except Exception as e:
-                    with cols[i % 4]:
-                        st.warning(f"{filename} の表示に失敗しました: {e}")
-
-            # 🧩 合成画像の生成と表示・ダウンロード
-            st.markdown("---")
-            st.markdown("### 🧩 進捗確認画像の生成とダウンロード")
-
-            if images:
-                cols_count = 4
-                rows_count = math.ceil(len(images) / cols_count)
-                canvas = Image.new("RGBA", (tile_size[0] * cols_count, tile_size[1] * rows_count), (255, 255, 255, 255))
-
-                for idx, img in enumerate(images):
-                    x = (idx % cols_count) * tile_size[0]
-                    y = (idx // cols_count) * tile_size[1]
-                    canvas.paste(img, (x, y))
-
-                st.image(canvas, caption="進捗確認画像", use_column_width=True)
-
-                buf = io.BytesIO()
-                canvas.save(buf, format="PNG")
-
-                st.download_button(
-                    label="📥 進捗画像をダウンロード",
-                    data=buf.getvalue(),
-                    file_name="progress.png",
-                    mime="image/png"
-                )
-
+            resume_data = json.load(resume_file)
+            st.success("✅ 中断ファイルを読み込みました")
         except json.JSONDecodeError:
-            st.error("❌ JSONの形式が正しくありません")
+            st.error("❌ 中断ファイルの形式が正しくありません")
 
+    # 入力値を保持する辞書
+    counts = {}
+
+    # 🔄 列数を4に変更
+    cols = st.columns(4)
+    for i, name in enumerate(image_names):
+        path = os.path.join("assets", "data", name)
+        try:
+            with open(path, "rb") as f:
+                img = Image.open(io.BytesIO(f.read()))
+                with cols[i % 4]:
+                    st.image(img, caption=name, width=150)
+
+                    # 中断ファイルに目標があれば初期値に反映
+                    default_goal = resume_data.get(name, {}).get("goal", 0)
+
+                    count = st.number_input(
+                        f"{name} の目標数",
+                        min_value=0,
+                        value=default_goal,
+                        key=name
+                    )
+                    counts[name] = count
+        except Exception as e:
+            with cols[i % 4]:
+                st.warning(f"{name} の表示に失敗しました: {e}")
+
+    st.markdown("---")
+    st.markdown("### ✅ 目標数集計結果（JSON）")
+
+    # 中断データがあれば received/status を復元、それ以外は初期値
+    result = {}
+    for name, count in counts.items():
+        if count > 0:
+            received = resume_data.get(name, {}).get("received", 0)
+            status = resume_data.get(name, {}).get("status", "未達")
+            result[name] = {
+                "goal": count,
+                "received": received,
+                "status": status
+            }
+
+    st.json(result)
+
+    # JSON文字列に変換してダウンロードボタンを表示（空でも表示）
+    json_str = json.dumps(result, indent=2, ensure_ascii=False)
+    st.download_button(
+        label="📥 JSONをダウンロード",
+        data=json_str,
+        file_name="gift_goals.json",
+        mime="application/json"
+    )
+
+# stlite 実行時のエントリポイント
 if __name__ == "__main__":
     render()
+
