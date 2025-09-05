@@ -15,8 +15,12 @@ def render():
             gift_data = json.load(uploaded_file)
             st.success("✅ JSONの読み込みに成功しました")
 
+            # 🔧 列数選択（1〜8）
+            st.markdown("---")
+            col_count = st.selectbox("表示する列数を選択してください", options=list(range(1, 9)), index=3)
+
             st.markdown("### 🎁 ギフト一覧プレビュー")
-            cols = st.columns(4)
+            cols = st.columns(col_count)
 
             images = []
             tile_size = (150, 150)
@@ -44,11 +48,11 @@ def render():
 
                         images.append(img)
 
-                        with cols[i % 4]:
+                        with cols[i % col_count]:
                             st.image(img, caption=filename, width=150)
 
                 except Exception as e:
-                    with cols[i % 4]:
+                    with cols[i % col_count]:
                         st.warning(f"{filename} の表示に失敗しました: {e}")
 
             # 🧩 合成画像の生成と表示・ダウンロード
@@ -56,13 +60,12 @@ def render():
             st.markdown("### 🧩 進捗確認画像の生成とダウンロード")
 
             if images:
-                cols_count = 4
-                rows_count = math.ceil(len(images) / cols_count)
-                canvas = Image.new("RGBA", (tile_size[0] * cols_count, tile_size[1] * rows_count), (255, 255, 255, 255))
+                rows_count = math.ceil(len(images) / col_count)
+                canvas = Image.new("RGBA", (tile_size[0] * col_count, tile_size[1] * rows_count), (255, 255, 255, 255))
 
                 for idx, img in enumerate(images):
-                    x = (idx % cols_count) * tile_size[0]
-                    y = (idx // cols_count) * tile_size[1]
+                    x = (idx % col_count) * tile_size[0]
+                    y = (idx // col_count) * tile_size[1]
                     canvas.paste(img, (x, y))
 
                 st.image(canvas, caption="進捗確認画像", use_column_width=True)
