@@ -15,7 +15,7 @@ def render():
             st.success("✅ JSONの読み込みに成功しました")
 
             st.markdown("### 🎁 ギフト一覧")
-            cols = st.columns(4)  # 🔄 列数を4に変更
+            cols = st.columns(4)  # 列数を4に設定
             result_data = {}
 
             for i, filename in enumerate(goal_data):
@@ -26,6 +26,7 @@ def render():
                         with cols[i % 4]:
                             st.image(img, caption=filename, width=150)
 
+                            # 中断ファイルから目標と進捗を取得
                             goal = goal_data[filename].get("goal", 0)
                             default_received = goal_data[filename].get("received", 0)
 
@@ -38,16 +39,20 @@ def render():
                                 key=input_key
                             )
 
+                            # 達成状況と進捗率の計算
                             status = "達成" if received >= goal and goal > 0 else "未達"
                             progress_ratio = received / goal if goal > 0 else 0
                             progress_percent = int(progress_ratio * 100)
+                            safe_ratio = min(progress_ratio, 1.0)
 
+                            # 表示
                             st.markdown(f"🎯 目標: `{goal}`")
-                            st.markdown(f"📦 もらった数: `{received}`")
+                            # st.markdown(f"📦 もらった数: `{received}`")
                             st.markdown(f"{'✅' if status == '達成' else '❌'} {status}")
-                            st.progress(progress_ratio)
+                            st.progress(safe_ratio)
                             st.markdown(f"📈 達成率: `{progress_percent}%`")
 
+                            # 結果を保存
                             result_data[filename] = {
                                 "goal": goal,
                                 "received": received,
