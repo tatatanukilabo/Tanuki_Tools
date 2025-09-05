@@ -47,7 +47,7 @@ def render():
 
                             # 表示
                             st.markdown(f"🎯 目標: `{goal}`")
-                            # st.markdown(f"📦 もらった数: `{received}`")
+                            st.markdown(f"📦 もらった数: `{received}`")
                             st.markdown(f"{'✅' if status == '達成' else '❌'} {status}")
                             st.progress(safe_ratio)
                             st.markdown(f"📈 達成率: `{progress_percent}%`")
