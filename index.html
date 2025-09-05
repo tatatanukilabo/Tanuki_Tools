@@ -35,7 +35,8 @@
             fetch("Home.py").then(res => res.text()),
             fetch("pages/Page1.py").then(res => res.text()),
             fetch("pages/Page2.py").then(res => res.text()),
-            fetch("assets/icons/icon.png").then(res => res.arrayBuffer())
+            fetch("assets/icons/icon.png").then(res => res.arrayBuffer()),
+            fetch("assets/icons/check.png").then(res => res.arrayBuffer())
           ];
 
           // 画像ファイルの読み込み
@@ -51,6 +52,7 @@
                 "pages/Page1.py": page1Code,
                 "pages/Page2.py": page2Code,
                 "assets/icons/icon.png": iconBytes,
+                "assets/icons/check.png": checkBytes,
                 "assets/data/list.json": new TextEncoder().encode(listJsonText) // ← Pythonで open() 可能に
               };
 
@@ -69,4 +71,5 @@
         });
     </script>
   </body>
+
 </html>
