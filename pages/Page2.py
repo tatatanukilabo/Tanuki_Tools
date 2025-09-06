@@ -14,7 +14,7 @@ def render():
             goal_data = json.load(uploaded_file)
             st.success("✅ JSONの読み込みに成功しました")
 
-            # 🔧 列数選択（1〜8）
+            # 🔧 列数選択（1〜8） 初期値は2列（index=1）
             st.markdown("---")
             col_count = st.selectbox("表示する列数を選択してください", options=list(range(1, 9)), index=1)
 
@@ -35,8 +35,11 @@ def render():
                             display_name = os.path.splitext(filename)[0]
                             point = goal_data[filename].get("point", 0)
                             category = goal_data[filename].get("category", "未分類")
-                            caption = f"{display_name}（{point}pt / {category}）"
-                            st.image(img, caption=caption, width=150)
+
+                            # ✅ キャプションを使わず、画像の下に個別表示（細文字）
+                            st.image(img, width=150)
+                            st.markdown(f"💎 ポイント: `{point}pt`")
+                            st.markdown(f"🏷️ カテゴリ: `{category}`")
 
                             goal = goal_data[filename].get("goal", 0)
                             default_received = goal_data[filename].get("received", 0)
@@ -102,4 +105,3 @@ def render():
 
 if __name__ == "__main__":
     render()
-
