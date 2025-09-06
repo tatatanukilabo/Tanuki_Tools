@@ -31,10 +31,10 @@
     <script src="https://cdn.jsdelivr.net/npm/@stlite/mountable@0.58.3/build/stlite.js"></script>
     <script>
       fetch("assets/data/list.json")
-        .then((res) => res.text()) // Python側で open() できるよう text()
+        .then((res) => res.text())
         .then((listJsonText) => {
-          const giftList = JSON.parse(listJsonText); // [{ filename, point, category }, ...]
-          const imageFilenames = giftList.map((g) => g.filename); // filenameだけ抽出
+          const giftList = JSON.parse(listJsonText); // { filename: { point, category }, ... }
+          const imageFilenames = Object.keys(giftList); // filenameだけ抽出
 
           const baseFetches = [
             fetch("Home.py").then((res) => res.text()),
