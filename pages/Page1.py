@@ -7,7 +7,7 @@ import os
 def render():
     st.set_page_config(page_title="ギフト目標設定", layout="wide")
     st.markdown("## 🧮 ギフト目標設定")
-    st.write("各ギフトの目標数を設定してください。")
+    st.write("各ギフトの目標数と受け取り数を設定してください。")
 
     # 📥 中断ファイルの読み込み
     st.markdown("### 📥 中断ファイル（JSON）を読み込む")
@@ -24,16 +24,20 @@ def render():
     # 📂 list.json を読み込む（辞書形式）
     try:
         with open("assets/data/list.json", "r", encoding="utf-8") as f:
-            gift_list = json.load(f)  # dict形式: { filename: {point, category}, ... }
+            gift_list = json.load(f)  # { filename: {point, category}, ... }
     except Exception as e:
         st.error(f"画像一覧の読み込みに失敗しました: {e}")
         return
 
-    # 🧠 初期化：全ギフトの目標値を session_state に保持
-    for name, gift in gift_list.items():
-        key = f"goal_{name}"
-        if key not in st.session_state:
-            st.session_state[key] = resume_data.get(name, {}).get("goal", 0)
+    # 🧠 初期化：session_state に goal / received を保持
+    for name in gift_list:
+        goal_key = f"goal_{name}"
+        received_key = f"received_{name}"
+
+        if goal_key not in st.session_state:
+            st.session_state[goal_key] = resume_data.get(name, {}).get("goal", 0)
+        if received_key not in st.session_state:
+            st.session_state[received_key] = resume_data.get(name, {}).get("received", 0)
 
     # 🔃 ソート UI（point または category）
     st.markdown("---")
@@ -48,12 +52,14 @@ def render():
     st.markdown("---")
     col_count = st.selectbox("表示する列数を選択してください", options=list(range(1, 9)), index=1)
 
-    # 🎨 ギフト画像と目標数入力
+    # 🎨 ギフト画像と目標数・受け取り数入力
     cols = st.columns(col_count)
     for i, (name, gift) in enumerate(sorted_list):
         display_name = os.path.splitext(name)[0]
-        key = f"goal_{name}"
+        goal_key = f"goal_{name}"
+        received_key = f"received_{name}"
         path = os.path.join("assets", "data", name)
+
         try:
             with open(path, "rb") as f:
                 img = Image.open(io.BytesIO(f.read()))
@@ -61,7 +67,9 @@ def render():
                     st.image(img, width=150)
                     st.markdown(f"💎 ポイント: `{gift['point']}pt`")
                     st.markdown(f"🏷️ カテゴリ: `{gift['category']}`")
-                    st.number_input(f"{display_name} の目標数", min_value=0, key=key)
+
+                    st.number_input(f"{display_name} の目標数", min_value=0, key=goal_key)
+                    st.number_input(f"{display_name} のもらった数", min_value=0, key=received_key)
         except Exception as e:
             with cols[i % col_count]:
                 st.warning(f"{name} の表示に失敗しました: {e}")
@@ -72,13 +80,13 @@ def render():
 
     result = {}
     for name, gift in gift_list.items():
-        key = f"goal_{name}"
-        count = st.session_state.get(key, 0)
-        if count > 0:
-            received = resume_data.get(name, {}).get("received", 0)
-            status = resume_data.get(name, {}).get("status", "未達")
+        goal = st.session_state.get(f"goal_{name}", 0)
+        received = st.session_state.get(f"received_{name}", 0)
+        status = "達成" if received >= goal and goal > 0 else "未達"
+
+        if goal > 0:
             result[name] = {
-                "goal": count,
+                "goal": goal,
                 "received": received,
                 "status": status,
                 "point": gift.get("point", 0),
