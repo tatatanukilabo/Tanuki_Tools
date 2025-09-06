@@ -62,8 +62,8 @@ def render():
     for i, gift in enumerate(filtered_list):
         name = gift["filename"]
         display_name = os.path.splitext(name)[0]
-        path = os.path.join("assets", "data", name)
         key = f"goal_{name}"
+        path = os.path.join("assets", "data", name)
         try:
             with open(path, "rb") as f:
                 img = Image.open(io.BytesIO(f.read()))
@@ -76,7 +76,7 @@ def render():
                         value=st.session_state[key],
                         key=key
                     )
-                    st.session_state[key] = count
+                    # ✅ session_state への代入は不要（自動反映される）
         except Exception as e:
             with cols[i % col_count]:
                 st.warning(f"{name} の表示に失敗しました: {e}")
