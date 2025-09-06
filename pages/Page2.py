@@ -31,14 +31,19 @@ def render():
                     with open(path, "rb") as f:
                         img = Image.open(io.BytesIO(f.read()))
                         with cols[i % col_count]:
-                            st.image(img, caption=filename, width=150)
+                            # 🎨 表示名（拡張子除去）
+                            display_name = os.path.splitext(filename)[0]
+                            point = goal_data[filename].get("point", 0)
+                            category = goal_data[filename].get("category", "未分類")
+                            caption = f"{display_name}（{point}pt / {category}）"
+                            st.image(img, caption=caption, width=150)
 
                             goal = goal_data[filename].get("goal", 0)
                             default_received = goal_data[filename].get("received", 0)
 
                             input_key = f"received_{filename}"
                             received = st.number_input(
-                                f"{filename} のもらった数",
+                                f"{display_name} のもらった数",
                                 min_value=0,
                                 value=default_received,
                                 step=1,
@@ -58,7 +63,9 @@ def render():
                             result_data[filename] = {
                                 "goal": goal,
                                 "received": received,
-                                "status": status
+                                "status": status,
+                                "point": point,
+                                "category": category
                             }
 
                             if status == "達成":
