@@ -69,12 +69,16 @@ def render():
             st.markdown("### 🧩 進捗確認画像の生成とダウンロード")
 
             if images:
+                gap = 10  # スキマサイズ（px）
                 rows_count = math.ceil(len(images) / col_count)
-                canvas = Image.new("RGBA", (tile_size[0] * col_count, tile_size[1] * rows_count), bg_color_rgb)
+
+                canvas_width = tile_size[0] * col_count + gap * (col_count - 1)
+                canvas_height = tile_size[1] * rows_count + gap * (rows_count - 1)
+                canvas = Image.new("RGBA", (canvas_width, canvas_height), bg_color_rgb)
 
                 for idx, img in enumerate(images):
-                    x = (idx % col_count) * tile_size[0]
-                    y = (idx // col_count) * tile_size[1]
+                    x = (idx % col_count) * (tile_size[0] + gap)
+                    y = (idx // col_count) * (tile_size[1] + gap)
                     canvas.paste(img, (x, y))
 
                 st.image(canvas, caption="進捗確認画像", use_column_width=True)
