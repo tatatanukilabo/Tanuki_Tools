@@ -1,0 +1,277 @@
+[
+  {
+    "filename": "茶.png",
+    "point": 100,
+    "category": "ネタ"
+  },
+  {
+    "filename": "草.png",
+    "point": 100,
+    "category": "ネタ"
+  },
+  {
+    "filename": "またね.png",
+    "point": 100,
+    "category": "定番"
+  },
+  {
+    "filename": "ハート大.png",
+    "point": 200,
+    "category": "LOVE"
+  },
+  {
+    "filename": "ダウト.png",
+    "point": 200,
+    "category": "ネタ"
+  },
+  {
+    "filename": "しらすまん.png",
+    "point": 200,
+    "category": "定番"
+  },
+  {
+    "filename": "よーい、アクション.png",
+    "point": 200,
+    "category": "定番"
+  },
+  {
+    "filename": "クラッカー200.png",
+    "point": 200,
+    "category": "定番"
+  },
+  {
+    "filename": "サーチライト.png",
+    "point": 200,
+    "category": "定番"
+  },
+  {
+    "filename": "バラ.png",
+    "point": 200,
+    "category": "定番"
+  },
+  {
+    "filename": "参上.png",
+    "point": 200,
+    "category": "定番"
+  },
+  {
+    "filename": "御意.png",
+    "point": 200,
+    "category": "定番"
+  },
+  {
+    "filename": "拍手.png",
+    "point": 200,
+    "category": "定番"
+  },
+  {
+    "filename": "カチコチ.png",
+    "point": 300,
+    "category": "ネタ"
+  },
+  {
+    "filename": "怒り.png",
+    "point": 300,
+    "category": "ネタ"
+  },
+  {
+    "filename": "爆弾.png",
+    "point": 300,
+    "category": "ネタ"
+  },
+  {
+    "filename": "すこっていい？.png",
+    "point": 500,
+    "category": "LOVE"
+  },
+  {
+    "filename": "ずきゅーん.png",
+    "point": 500,
+    "category": "LOVE"
+  },
+  {
+    "filename": "よめこな.png",
+    "point": 500,
+    "category": "LOVE"
+  },
+  {
+    "filename": "そういうとこだぞ.png",
+    "point": 500,
+    "category": "ネタ"
+  },
+  {
+    "filename": "たいへんよくできました.png",
+    "point": 500,
+    "category": "ネタ"
+  },
+  {
+    "filename": "たらい落とし.png",
+    "point": 500,
+    "category": "ネタ"
+  },
+  {
+    "filename": "ん…？.png",
+    "point": 500,
+    "category": "ネタ"
+  },
+  {
+    "filename": "パイ投げ.png",
+    "point": 500,
+    "category": "ネタ"
+  },
+  {
+    "filename": "パシャ.png",
+    "point": 500,
+    "category": "ネタ"
+  },
+  {
+    "filename": "助かる.png",
+    "point": 500,
+    "category": "ネタ"
+  },
+  {
+    "filename": "大泣き.png",
+    "point": 500,
+    "category": "ネタ"
+  },
+  {
+    "filename": "警察だ！.png",
+    "point": 500,
+    "category": "ネタ"
+  },
+  {
+    "filename": "集中線.png",
+    "point": 500,
+    "category": "ネタ"
+  },
+  {
+    "filename": "がんばれ.png",
+    "point": 500,
+    "category": "定番"
+  },
+  {
+    "filename": "こんにちは.png",
+    "point": 500,
+    "category": "定番"
+  },
+  {
+    "filename": "また来るね.png",
+    "point": 500,
+    "category": "定番"
+  },
+  {
+    "filename": "もういっかい.png",
+    "point": 500,
+    "category": "定番"
+  },
+  {
+    "filename": "エモい.png",
+    "point": 500,
+    "category": "定番"
+  },
+  {
+    "filename": "スポットライト.png",
+    "point": 500,
+    "category": "定番"
+  },
+  {
+    "filename": "乾杯！.png",
+    "point": 500,
+    "category": "定番"
+  },
+  {
+    "filename": "花束.png",
+    "point": 500,
+    "category": "定番"
+  },
+  {
+    "filename": "タピオカ.png",
+    "point": 700,
+    "category": "スペシャル"
+  },
+  {
+    "filename": "おやすみ.png",
+    "point": 800,
+    "category": "定番"
+  },
+  {
+    "filename": "すこ.png",
+    "point": 1000,
+    "category": "LOVE"
+  },
+  {
+    "filename": "ケーキ1000.png",
+    "point": 1000,
+    "category": "スペシャル"
+  },
+  {
+    "filename": "お宝発見.png",
+    "point": 1000,
+    "category": "ネタ"
+  },
+  {
+    "filename": "くす玉.png",
+    "point": 1000,
+    "category": "定番"
+  },
+  {
+    "filename": "かわいい.png",
+    "point": 3000,
+    "category": "LOVE"
+  },
+  {
+    "filename": "あちらのお客様から.png",
+    "point": 3000,
+    "category": "スペシャル"
+  },
+  {
+    "filename": "パフェ.png",
+    "point": 3000,
+    "category": "スペシャル"
+  },
+  {
+    "filename": "缶詰.png",
+    "point": 3000,
+    "category": "スペシャル"
+  },
+  {
+    "filename": "バラ缶.png",
+    "point": 5000,
+    "category": "スペシャル"
+  },
+  {
+    "filename": "なでなで.png",
+    "point": 7000,
+    "category": "LOVE"
+  },
+  {
+    "filename": "尊い.png",
+    "point": 7000,
+    "category": "LOVE"
+  },
+  {
+    "filename": "だいすき.png",
+    "point": 10000,
+    "category": "LOVE"
+  },
+  {
+    "filename": "ハッピーバースデー10000.png",
+    "point": 10000,
+    "category": "スペシャル"
+  },
+  {
+    "filename": "打ち上げ花火.png",
+    "point": 10000,
+    "category": "スペシャル"
+  },
+  {
+    "filename": "缶詰タワー.png",
+    "point": 10000,
+    "category": "スペシャル"
+  },
+  {
+    "filename": "溢れる想い.png",
+    "point": 30000,
+    "category": "LOVE"
+  }
+]
