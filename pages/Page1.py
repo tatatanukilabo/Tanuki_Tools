@@ -29,16 +29,6 @@ def render():
         st.error(f"画像一覧の読み込みに失敗しました: {e}")
         return
 
-    # 🧠 初期化：session_state に goal / received を保持
-    for name in gift_list:
-        goal_key = f"goal_{name}"
-        received_key = f"received_{name}"
-
-        if goal_key not in st.session_state:
-            st.session_state[goal_key] = resume_data.get(name, {}).get("goal", 0)
-        if received_key not in st.session_state:
-            st.session_state[received_key] = resume_data.get(name, {}).get("received", 0)
-
     # 🔃 ソート UI（point または category）
     st.markdown("---")
     st.markdown("### 🔃 ソート設定")
@@ -53,12 +43,19 @@ def render():
     col_count = st.selectbox("表示する列数を選択してください", options=list(range(1, 9)), index=1)
 
     # 🎨 ギフト画像と目標数・受け取り数入力
+    st.markdown("---")
+    st.markdown("### 🎁 ギフト一覧")
     cols = st.columns(col_count)
+
     for i, (name, gift) in enumerate(sorted_list):
         display_name = os.path.splitext(name)[0]
         goal_key = f"goal_{name}"
         received_key = f"received_{name}"
         path = os.path.join("assets", "data", name)
+
+        # 中断データから初期値を取得
+        initial_goal = resume_data.get(name, {}).get("goal", 0)
+        initial_received = resume_data.get(name, {}).get("received", 0)
 
         try:
             with open(path, "rb") as f:
@@ -68,8 +65,8 @@ def render():
                     st.markdown(f"💎 ポイント: `{gift['point']}pt`")
                     st.markdown(f"🏷️ カテゴリ: `{gift['category']}`")
 
-                    st.number_input(f"{display_name} の目標数", min_value=0, key=goal_key)
-                    st.number_input(f"{display_name} のもらった数", min_value=0, key=received_key)
+                    st.number_input(f"{display_name} の目標数", min_value=0, value=initial_goal, key=goal_key)
+                    st.number_input(f"{display_name} のもらった数", min_value=0, value=initial_received, key=received_key)
         except Exception as e:
             with cols[i % col_count]:
                 st.warning(f"{name} の表示に失敗しました: {e}")
