@@ -7,15 +7,21 @@
     <meta name="theme-color" content="#009C4E" />
     <link rel="manifest" href="manifest.json" />
     <link rel="icon" href="assets/icons/icon.png" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@stlite/mountable@0.58.3/build/stlite.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@stlite/mountable@0.58.3/build/stlite.css"
+    />
     <script>
       window.addEventListener("load", () => {
         if ("serviceWorker" in navigator) {
-          navigator.serviceWorker.register("sw.js").then(reg => {
-            console.log("✅ Service Worker registered:", reg);
-          }).catch(err => {
-            console.error("❌ Service Worker registration failed:", err);
-          });
+          navigator.serviceWorker
+            .register("sw.js")
+            .then((reg) => {
+              console.log("✅ Service Worker registered:", reg);
+            })
+            .catch((err) => {
+              console.error("❌ Service Worker registration failed:", err);
+            });
         }
       });
     </script>
@@ -24,29 +30,30 @@
     <div id="root"></div>
     <script src="https://cdn.jsdelivr.net/npm/@stlite/mountable@0.58.3/build/stlite.js"></script>
     <script>
-      // list.json を読み込んで画像一覧を取得し、Python側でも使えるようにする
       fetch("assets/data/list.json")
-        .then(res => res.text()) // ← Pythonで使うために text() に変更
-        .then(listJsonText => {
-          const imageNames = JSON.parse(listJsonText);
+        .then((res) => res.text()) // Python側で open() できるよう text()
+        .then((listJsonText) => {
+          const giftList = JSON.parse(listJsonText); // [{ filename, point, category }, ...]
+          const imageFilenames = giftList.map((g) => g.filename); // filenameだけ抽出
 
-          // Pythonコードとアイコンの読み込み
           const baseFetches = [
-            fetch("Home.py").then(res => res.text()),
-            fetch("pages/Page1.py").then(res => res.text()),
-            fetch("pages/Page2.py").then(res => res.text()),
-            fetch("pages/Page3.py").then(res => res.text()),
-            fetch("assets/icons/icon.png").then(res => res.arrayBuffer()),
-            fetch("assets/icons/check.png").then(res => res.arrayBuffer())
+            fetch("Home.py").then((res) => res.text()),
+            fetch("pages/Page1.py").then((res) => res.text()),
+            fetch("pages/Page2.py").then((res) => res.text()),
+            fetch("pages/Page3.py").then((res) => res.text()),
+            fetch("assets/icons/icon.png").then((res) => res.arrayBuffer()),
+            fetch("assets/icons/check.png").then((res) => res.arrayBuffer()),
+            fetch("assets/data/list.json").then(() =>
+              new TextEncoder().encode(listJsonText)
+            )
           ];
 
-          // 画像ファイルの読み込み
-          const imageFetches = imageNames.map(name =>
-            fetch(`assets/data/${name}`).then(res => res.arrayBuffer())
+          const imageFetches = imageFilenames.map((name) =>
+            fetch(`assets/data/${name}`).then((res) => res.arrayBuffer())
           );
 
-          Promise.all([...baseFetches, ...imageFetches])
-            .then(([HomeCode, page1Code, page2Code, page3Code, iconBuffer, checkBuffer, ...imageBuffers]) => {
+          Promise.all([...baseFetches, ...imageFetches]).then(
+            ([HomeCode, page1Code, page2Code, page3Code, iconBuffer, checkBuffer, listJsonEncoded, ...imageBuffers]) => {
               const iconBytes = new Uint8Array(iconBuffer);
               const checkBytes = new Uint8Array(checkBuffer);
               const files = {
@@ -56,10 +63,10 @@
                 "pages/Page3.py": page3Code,
                 "assets/icons/icon.png": iconBytes,
                 "assets/icons/check.png": checkBytes,
-                "assets/data/list.json": new TextEncoder().encode(listJsonText) // ← Pythonで open() 可能に
+                "assets/data/list.json": listJsonEncoded
               };
 
-              imageNames.forEach((name, i) => {
+              imageFilenames.forEach((name, i) => {
                 files[`assets/data/${name}`] = new Uint8Array(imageBuffers[i]);
               });
 
@@ -70,12 +77,9 @@
                 },
                 document.getElementById("root")
               );
-            });
+            }
+          );
         });
     </script>
   </body>
-
 </html>
-
-
-
