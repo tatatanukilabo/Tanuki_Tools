@@ -1,277 +1,222 @@
-[
-  {
-    "filename": "茶.png",
+{
+  "茶.png": {
     "point": 100,
     "category": "ネタ"
   },
-  {
-    "filename": "草.png",
+  "草.png": {
     "point": 100,
     "category": "ネタ"
   },
-  {
-    "filename": "またね.png",
+  "またね.png": {
     "point": 100,
     "category": "定番"
   },
-  {
-    "filename": "ハート大.png",
+  "ハート大.png": {
     "point": 200,
     "category": "LOVE"
   },
-  {
-    "filename": "ダウト.png",
+  "ダウト.png": {
     "point": 200,
     "category": "ネタ"
   },
-  {
-    "filename": "しらすまん.png",
+  "しらすまん.png": {
     "point": 200,
     "category": "定番"
   },
-  {
-    "filename": "よーい、アクション.png",
+  "よーい、アクション.png": {
     "point": 200,
     "category": "定番"
   },
-  {
-    "filename": "クラッカー200.png",
+  "クラッカー200.png": {
     "point": 200,
     "category": "定番"
   },
-  {
-    "filename": "サーチライト.png",
+  "サーチライト.png": {
     "point": 200,
     "category": "定番"
   },
-  {
-    "filename": "バラ.png",
+  "バラ.png": {
     "point": 200,
     "category": "定番"
   },
-  {
-    "filename": "参上.png",
+  "参上.png": {
     "point": 200,
     "category": "定番"
   },
-  {
-    "filename": "御意.png",
+  "御意.png": {
     "point": 200,
     "category": "定番"
   },
-  {
-    "filename": "拍手.png",
+  "拍手.png": {
     "point": 200,
     "category": "定番"
   },
-  {
-    "filename": "カチコチ.png",
+  "カチコチ.png": {
     "point": 300,
     "category": "ネタ"
   },
-  {
-    "filename": "怒り.png",
+  "怒り.png": {
     "point": 300,
     "category": "ネタ"
   },
-  {
-    "filename": "爆弾.png",
+  "爆弾.png": {
     "point": 300,
     "category": "ネタ"
   },
-  {
-    "filename": "すこっていい？.png",
+  "すこっていい？.png": {
     "point": 500,
     "category": "LOVE"
   },
-  {
-    "filename": "ずきゅーん.png",
+  "ずきゅーん.png": {
     "point": 500,
     "category": "LOVE"
   },
-  {
-    "filename": "よめこな.png",
+  "よめこな.png": {
     "point": 500,
     "category": "LOVE"
   },
-  {
-    "filename": "そういうとこだぞ.png",
+  "そういうとこだぞ.png": {
     "point": 500,
     "category": "ネタ"
   },
-  {
-    "filename": "たいへんよくできました.png",
+  "たいへんよくできました.png": {
     "point": 500,
     "category": "ネタ"
   },
-  {
-    "filename": "たらい落とし.png",
+  "たらい落とし.png": {
     "point": 500,
     "category": "ネタ"
   },
-  {
-    "filename": "ん…？.png",
+  "ん…？.png": {
     "point": 500,
     "category": "ネタ"
   },
-  {
-    "filename": "パイ投げ.png",
+  "パイ投げ.png": {
     "point": 500,
     "category": "ネタ"
   },
-  {
-    "filename": "パシャ.png",
+  "パシャ.png": {
     "point": 500,
     "category": "ネタ"
   },
-  {
-    "filename": "助かる.png",
+  "助かる.png": {
     "point": 500,
     "category": "ネタ"
   },
-  {
-    "filename": "大泣き.png",
+  "大泣き.png": {
     "point": 500,
     "category": "ネタ"
   },
-  {
-    "filename": "警察だ！.png",
+  "警察だ！.png": {
     "point": 500,
     "category": "ネタ"
   },
-  {
-    "filename": "集中線.png",
+  "集中線.png": {
     "point": 500,
     "category": "ネタ"
   },
-  {
-    "filename": "がんばれ.png",
+  "がんばれ.png": {
     "point": 500,
     "category": "定番"
   },
-  {
-    "filename": "こんにちは.png",
+  "こんにちは.png": {
     "point": 500,
     "category": "定番"
   },
-  {
-    "filename": "また来るね.png",
+  "また来るね.png": {
     "point": 500,
     "category": "定番"
   },
-  {
-    "filename": "もういっかい.png",
+  "もういっかい.png": {
     "point": 500,
     "category": "定番"
   },
-  {
-    "filename": "エモい.png",
+  "エモい.png": {
     "point": 500,
     "category": "定番"
   },
-  {
-    "filename": "スポットライト.png",
+  "スポットライト.png": {
     "point": 500,
     "category": "定番"
   },
-  {
-    "filename": "乾杯！.png",
+  "乾杯！.png": {
     "point": 500,
     "category": "定番"
   },
-  {
-    "filename": "花束.png",
+  "花束.png": {
     "point": 500,
     "category": "定番"
   },
-  {
-    "filename": "タピオカ.png",
+  "タピオカ.png": {
     "point": 700,
     "category": "スペシャル"
   },
-  {
-    "filename": "おやすみ.png",
+  "おやすみ.png": {
     "point": 800,
     "category": "定番"
   },
-  {
-    "filename": "すこ.png",
+  "すこ.png": {
     "point": 1000,
     "category": "LOVE"
   },
-  {
-    "filename": "ケーキ1000.png",
+  "ケーキ1000.png": {
     "point": 1000,
     "category": "スペシャル"
   },
-  {
-    "filename": "お宝発見.png",
+  "お宝発見.png": {
     "point": 1000,
     "category": "ネタ"
   },
-  {
-    "filename": "くす玉.png",
+  "くす玉.png": {
     "point": 1000,
     "category": "定番"
   },
-  {
-    "filename": "かわいい.png",
+  "かわいい.png": {
     "point": 3000,
     "category": "LOVE"
   },
-  {
-    "filename": "あちらのお客様から.png",
+  "あちらのお客様から.png": {
     "point": 3000,
     "category": "スペシャル"
   },
-  {
-    "filename": "パフェ.png",
+  "パフェ.png": {
     "point": 3000,
     "category": "スペシャル"
   },
-  {
-    "filename": "缶詰.png",
+  "缶詰.png": {
     "point": 3000,
     "category": "スペシャル"
   },
-  {
-    "filename": "バラ缶.png",
+  "バラ缶.png": {
     "point": 5000,
     "category": "スペシャル"
   },
-  {
-    "filename": "なでなで.png",
+  "なでなで.png": {
     "point": 7000,
     "category": "LOVE"
   },
-  {
-    "filename": "尊い.png",
+  "尊い.png": {
     "point": 7000,
     "category": "LOVE"
   },
-  {
-    "filename": "だいすき.png",
+  "だいすき.png": {
     "point": 10000,
     "category": "LOVE"
   },
-  {
-    "filename": "ハッピーバースデー10000.png",
+  "ハッピーバースデー10000.png": {
     "point": 10000,
     "category": "スペシャル"
   },
-  {
-    "filename": "打ち上げ花火.png",
+  "打ち上げ花火.png": {
     "point": 10000,
     "category": "スペシャル"
   },
-  {
-    "filename": "缶詰タワー.png",
+  "缶詰タワー.png": {
     "point": 10000,
     "category": "スペシャル"
   },
-  {
-    "filename": "溢れる想い.png",
+  "溢れる想い.png": {
     "point": 30000,
     "category": "LOVE"
   }
-]
+}
