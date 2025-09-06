@@ -51,11 +51,24 @@ def render():
                         tile = Image.new("RGBA", tile_size, tile_bg_rgb)
                         tile.paste(original, (0, 0), original)
 
-                        # 達成ステータスならチェックマークを重ねる
+                        # ✅ チェックマークを重ねる
                         if gift_data[filename].get("status") == "達成" and check_img:
                             cx = (tile_size[0] - check_img.width) // 2
                             cy = (tile_size[1] - check_img.height) // 2
                             tile.paste(check_img, (cx, cy), check_img)
+
+                        # ✅ 進捗バーを描画
+                        goal = gift_data[filename].get("goal", 0)
+                        received = gift_data[filename].get("received", 0)
+                        progress = min(received / goal, 1.0) if goal > 0 else 0
+
+                        bar_height = 10
+                        bar_margin = 5
+                        bar_y = tile_size[1] - bar_height - bar_margin
+                        bar_width = int(tile_size[0] * progress)
+
+                        draw = ImageDraw.Draw(tile)
+                        draw.rectangle([0, bar_y, bar_width, bar_y + bar_height], fill=tile_bg_rgb)
 
                         images.append(tile)
 
