@@ -32,6 +32,13 @@ def render():
             tile_bg_hex = st.color_picker("ギフト画像の背景色", value="#FFFFFF")
             tile_bg_rgb = tuple(int(tile_bg_hex.lstrip("#")[i:i+2], 16) for i in (0, 2, 4)) + (255,)
 
+            # 🎨 進捗バーの色設定
+            st.markdown("### 🎨 進捗バーの色設定")
+            progress_fill_hex = st.color_picker("進捗バーの色（達成部分）", value="#00BFFF")
+            progress_bg_hex = st.color_picker("進捗バーの背景色（未達部分）", value="#DDDDDD")
+            progress_fill_rgb = tuple(int(progress_fill_hex.lstrip("#")[i:i+2], 16) for i in (0, 2, 4)) + (255,)
+            progress_bg_rgb = tuple(int(progress_bg_hex.lstrip("#")[i:i+2], 16) for i in (0, 2, 4)) + (255,)
+
             # ✅ チェックマーク画像の読み込み
             try:
                 check_path = os.path.join("assets", "icons", "check.png")
@@ -68,7 +75,8 @@ def render():
                         bar_width = int(tile_size[0] * progress)
 
                         draw = ImageDraw.Draw(tile)
-                        draw.rectangle([0, bar_y, bar_width, bar_y + bar_height], fill=tile_bg_rgb)
+                        draw.rectangle([0, bar_y, tile_size[0], bar_y + bar_height], fill=progress_bg_rgb)     # 背景
+                        draw.rectangle([0, bar_y, bar_width, bar_y + bar_height], fill=progress_fill_rgb)     # 進捗
 
                         images.append(tile)
 
