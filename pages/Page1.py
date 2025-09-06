@@ -21,17 +21,16 @@ def render():
         except json.JSONDecodeError:
             st.error("❌ 中断ファイルの形式が正しくありません")
 
-    # 📂 list.json を読み込む
+    # 📂 list.json を読み込む（辞書形式）
     try:
         with open("assets/data/list.json", "r", encoding="utf-8") as f:
-            gift_list = json.load(f)
+            gift_list = json.load(f)  # dict形式: { filename: {point, category}, ... }
     except Exception as e:
         st.error(f"画像一覧の読み込みに失敗しました: {e}")
         return
 
     # 🧠 初期化：全ギフトの目標値を session_state に保持
-    for gift in gift_list:
-        name = gift["filename"]
+    for name, gift in gift_list.items():
         key = f"goal_{name}"
         if key not in st.session_state:
             st.session_state[key] = resume_data.get(name, {}).get("goal", 0)
@@ -43,7 +42,7 @@ def render():
     sort_order = st.radio("並び順", options=["昇順", "降順"])
     reverse = sort_order == "降順"
 
-    sorted_list = sorted(gift_list, key=lambda x: x[sort_key], reverse=reverse)
+    sorted_list = sorted(gift_list.items(), key=lambda x: x[1][sort_key], reverse=reverse)
 
     # 🔧 列数選択（初期値2列）
     st.markdown("---")
@@ -51,8 +50,7 @@ def render():
 
     # 🎨 ギフト画像と目標数入力
     cols = st.columns(col_count)
-    for i, gift in enumerate(sorted_list):
-        name = gift["filename"]
+    for i, (name, gift) in enumerate(sorted_list):
         display_name = os.path.splitext(name)[0]
         key = f"goal_{name}"
         path = os.path.join("assets", "data", name)
@@ -61,16 +59,9 @@ def render():
                 img = Image.open(io.BytesIO(f.read()))
                 with cols[i % col_count]:
                     st.image(img, width=150)
-
-                    # ✅ 画像の下に個別情報を表示
                     st.markdown(f"💎 ポイント: `{gift['point']}pt`")
                     st.markdown(f"🏷️ カテゴリ: `{gift['category']}`")
-
-                    st.number_input(
-                        f"{display_name} の目標数",
-                        min_value=0,
-                        key=key
-                    )
+                    st.number_input(f"{display_name} の目標数", min_value=0, key=key)
         except Exception as e:
             with cols[i % col_count]:
                 st.warning(f"{name} の表示に失敗しました: {e}")
@@ -80,8 +71,7 @@ def render():
     st.markdown("### ✅ 目標数集計結果（JSON）")
 
     result = {}
-    for gift in gift_list:
-        name = gift["filename"]
+    for name, gift in gift_list.items():
         key = f"goal_{name}"
         count = st.session_state.get(key, 0)
         if count > 0:
@@ -109,5 +99,3 @@ def render():
 # stlite 実行時のエントリポイント
 if __name__ == "__main__":
     render()
-
-
