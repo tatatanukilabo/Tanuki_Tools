@@ -40,8 +40,6 @@ def render():
             frame_color_rgb = tuple(int(frame_color_hex.lstrip("#")[i:i+2], 16) for i in (0, 2, 4)) + (255,)
 
             
-            
-            st.markdown("### 🎁 ギフト一覧プレビュー")
             cols = st.columns(col_count)
 
             tile_size = (150, 150)
@@ -104,11 +102,6 @@ def render():
                             )
 
                         images.append(tile)
-
-                        with cols[i % col_count]:
-                            display_name = os.path.splitext(filename)[0]
-                            st.image(tile, width=150)
-                            st.markdown(f"📄 ギフト名: `{display_name}`")
 
                 except Exception as e:
                     with cols[i % col_count]:
