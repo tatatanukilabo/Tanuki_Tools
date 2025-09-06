@@ -45,7 +45,7 @@ def render():
 
     sorted_list = sorted(gift_list, key=lambda x: x[sort_key], reverse=reverse)
 
-    # 🔧 列数選択
+    # 🔧 列数選択（初期値2列）
     st.markdown("---")
     col_count = st.selectbox("表示する列数を選択してください", options=list(range(1, 9)), index=1)
 
@@ -60,7 +60,13 @@ def render():
             with open(path, "rb") as f:
                 img = Image.open(io.BytesIO(f.read()))
                 with cols[i % col_count]:
-                    st.image(img, caption=f"{display_name}（{gift['point']}pt / {gift['category']}）", width=150)
+                    st.image(img, width=150)
+
+                    # ✅ 画像の下に個別情報を表示
+                    st.markdown(f"**📄 ファイル名**: `{display_name}`")
+                    st.markdown(f"**💎 ポイント**: `{gift['point']}pt`")
+                    st.markdown(f"**🏷️ カテゴリ**: `{gift['category']}`")
+
                     st.number_input(
                         f"{display_name} の目標数",
                         min_value=0,
@@ -104,4 +110,3 @@ def render():
 # stlite 実行時のエントリポイント
 if __name__ == "__main__":
     render()
-
