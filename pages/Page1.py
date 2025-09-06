@@ -63,9 +63,9 @@ def render():
                     st.image(img, width=150)
 
                     # ✅ 画像の下に個別情報を表示
-                    st.markdown(f"**📄 ファイル名**: `{display_name}`")
-                    st.markdown(f"**💎 ポイント**: `{gift['point']}pt`")
-                    st.markdown(f"**🏷️ カテゴリ**: `{gift['category']}`")
+                    st.markdown(f"📄 ギフト名: `{display_name}`")
+                    st.markdown(f"💎 ポイント: `{gift['point']}pt`")
+                    st.markdown(f"🏷️ カテゴリ: `{gift['category']}`")
 
                     st.number_input(
                         f"{display_name} の目標数",
@@ -110,3 +110,4 @@ def render():
 # stlite 実行時のエントリポイント
 if __name__ == "__main__":
     render()
+
