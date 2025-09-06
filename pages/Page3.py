@@ -6,6 +6,7 @@ import os
 import math
 
 def render():
+    st.set_page_config(page_title="ギフト進捗確認画像作成", layout="wide")
     st.markdown("## 🖼️ ギフト進捗確認画像作成アプリ")
 
     uploaded_file = st.file_uploader("📥 ギフト進捗データ（JSON）をアップロード", type="json")
@@ -18,6 +19,11 @@ def render():
             # 🔧 列数選択（1〜8） 初期値は2列（index=1）
             st.markdown("---")
             col_count = st.selectbox("表示する列数を選択してください", options=list(range(1, 9)), index=1)
+
+            # 🎨 背景色選択（初期値 #00BFFF）
+            st.markdown("### 🎨 合成画像の背景色を選択")
+            bg_color_hex = st.color_picker("背景色を選択してください", value="#00BFFF")
+            bg_color_rgb = tuple(int(bg_color_hex.lstrip("#")[i:i+2], 16) for i in (0, 2, 4)) + (255,)
 
             st.markdown("### 🎁 ギフト一覧プレビュー")
             cols = st.columns(col_count)
@@ -63,7 +69,7 @@ def render():
 
             if images:
                 rows_count = math.ceil(len(images) / col_count)
-                canvas = Image.new("RGBA", (tile_size[0] * col_count, tile_size[1] * rows_count), (255, 255, 255, 255))
+                canvas = Image.new("RGBA", (tile_size[0] * col_count, tile_size[1] * rows_count), bg_color_rgb)
 
                 for idx, img in enumerate(images):
                     x = (idx % col_count) * tile_size[0]
