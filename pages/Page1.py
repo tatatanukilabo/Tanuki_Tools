@@ -29,6 +29,13 @@ def render():
         st.error(f"画像一覧の読み込みに失敗しました: {e}")
         return
 
+    # 🧠 初期化：全ギフトの目標値を session_state に保持
+    for gift in gift_list:
+        name = gift["filename"]
+        key = f"goal_{name}"
+        if key not in st.session_state:
+            st.session_state[key] = resume_data.get(name, {}).get("goal", 0)
+
     # 🔍 絞り込み・ソート UI
     st.markdown("---")
     st.markdown("### 🔍 絞り込み・ソート")
@@ -56,17 +63,12 @@ def render():
         name = gift["filename"]
         display_name = os.path.splitext(name)[0]
         path = os.path.join("assets", "data", name)
+        key = f"goal_{name}"
         try:
             with open(path, "rb") as f:
                 img = Image.open(io.BytesIO(f.read()))
                 with cols[i % col_count]:
                     st.image(img, caption=f"{display_name}（{gift['point']}pt / {gift['category']}）", width=150)
-
-                    default_goal = resume_data.get(name, {}).get("goal", 0)
-                    key = f"goal_{name}"
-
-                    if key not in st.session_state:
-                        st.session_state[key] = default_goal
 
                     count = st.number_input(
                         f"{display_name} の目標数",
