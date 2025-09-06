@@ -58,10 +58,10 @@ def render():
                     with cols[i % col_count]:
                         st.warning(f"{filename} の表示に失敗しました: {e}")
 
-            # 🎨 背景色選択（初期値 #00BFFF）をプレビューの後に表示
+            # 🎨 枠の色を選択（初期値 #00BFFF）をプレビューの後に表示
             st.markdown("---")
-            st.markdown("### 🎨 合成画像（進捗確認画像）の背景色を選択")
-            bg_color_hex = st.color_picker("背景色を選択してください", value="#00BFFF")
+            st.markdown("### 🎨 進捗確認画像の枠の色を選択")
+            bg_color_hex = st.color_picker("枠の色を選択してください", value="#00BFFF")
             bg_color_rgb = tuple(int(bg_color_hex.lstrip("#")[i:i+2], 16) for i in (0, 2, 4)) + (255,)
 
             # 🧩 合成画像（進捗確認画像）の生成と表示・ダウンロード
