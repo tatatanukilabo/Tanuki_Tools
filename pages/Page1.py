@@ -50,8 +50,7 @@ def render():
     st.markdown("---")
     col_count = st.selectbox("表示する列数を選択してください", options=list(range(1, 9)), index=3)
 
-    # 🎨 ギフト画像と目標数入力
-    counts = {}
+    # 🎨 ギフト画像と目標数入力（session_stateで保持）
     cols = st.columns(col_count)
     for i, gift in enumerate(filtered_list):
         name = gift["filename"]
@@ -64,24 +63,31 @@ def render():
                     st.image(img, caption=f"{display_name}（{gift['point']}pt / {gift['category']}）", width=150)
 
                     default_goal = resume_data.get(name, {}).get("goal", 0)
-                    unique_key = f"{name}_{gift['point']}_{gift['category']}"  # ← 絞り込み変更でも保持
+                    key = f"goal_{name}"
+
+                    if key not in st.session_state:
+                        st.session_state[key] = default_goal
+
                     count = st.number_input(
                         f"{display_name} の目標数",
                         min_value=0,
-                        value=default_goal,
-                        key=unique_key
+                        value=st.session_state[key],
+                        key=key
                     )
-                    counts[name] = count
+                    st.session_state[key] = count
         except Exception as e:
             with cols[i % col_count]:
                 st.warning(f"{name} の表示に失敗しました: {e}")
 
-    # 📊 集計結果の表示
+    # 📊 集計結果の表示（全ギフト対象）
     st.markdown("---")
     st.markdown("### ✅ 目標数集計結果（JSON）")
 
     result = {}
-    for name, count in counts.items():
+    for gift in gift_list:
+        name = gift["filename"]
+        key = f"goal_{name}"
+        count = st.session_state.get(key, 0)
         if count > 0:
             received = resume_data.get(name, {}).get("received", 0)
             status = resume_data.get(name, {}).get("status", "未達")
