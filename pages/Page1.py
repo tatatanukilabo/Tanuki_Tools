@@ -61,7 +61,6 @@ def render():
                 img = Image.open(io.BytesIO(f.read()))
                 with cols[i % col_count]:
                     st.image(img, caption=f"{display_name}（{gift['point']}pt / {gift['category']}）", width=150)
-
                     st.number_input(
                         f"{display_name} の目標数",
                         min_value=0,
@@ -86,7 +85,9 @@ def render():
             result[name] = {
                 "goal": count,
                 "received": received,
-                "status": status
+                "status": status,
+                "point": gift.get("point", 0),
+                "category": gift.get("category", "")
             }
 
     st.json(result)
