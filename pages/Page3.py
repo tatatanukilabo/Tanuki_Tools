@@ -28,7 +28,7 @@ def render():
 
             # 🎨 進捗バーの色設定
             st.markdown("### 🎨 進捗バーの色設定")
-            progress_fill_hex = st.color_picker("進捗バーの色（達成部分）", value="#0000FF")
+            progress_fill_hex = st.color_picker("進捗バーの色（達成部分）", value="#FF0000")
             progress_bg_hex = st.color_picker("進捗バーの背景色（未達部分）", value="#DDDDDD")
             progress_fill_rgb = tuple(int(progress_fill_hex.lstrip("#")[i:i+2], 16) for i in (0, 2, 4)) + (255,)
             progress_bg_rgb = tuple(int(progress_bg_hex.lstrip("#")[i:i+2], 16) for i in (0, 2, 4)) + (255,)
