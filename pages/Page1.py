@@ -9,6 +9,18 @@ def render():
     st.markdown("## 🧮 ギフト目標設定")
     st.write("各ギフトの目標数を設定してください。")
 
+    # 📥 中断ファイルの読み込み（最上部に移動）
+    st.markdown("### 📥 中断ファイル（JSON）を読み込む")
+    resume_file = st.file_uploader("中断ファイルをアップロード", type="json", key="resume")
+
+    resume_data = {}
+    if resume_file:
+        try:
+            resume_data = json.load(resume_file)
+            st.success("✅ 中断ファイルを読み込みました")
+        except json.JSONDecodeError:
+            st.error("❌ 中断ファイルの形式が正しくありません")
+
     # 📂 list.json を読み込む
     try:
         with open("assets/data/list.json", "r", encoding="utf-8") as f:
@@ -34,19 +46,6 @@ def render():
         if selected_category == "すべて" or g["category"] == selected_category
     ]
     filtered_list.sort(key=lambda x: x[sort_key], reverse=reverse)
-
-    # 📥 中断ファイルの読み込み
-    st.markdown("---")
-    st.markdown("### 📥 中断ファイル（JSON）を読み込む")
-    resume_file = st.file_uploader("中断ファイルをアップロード", type="json", key="resume")
-
-    resume_data = {}
-    if resume_file:
-        try:
-            resume_data = json.load(resume_file)
-            st.success("✅ 中断ファイルを読み込みました")
-        except json.JSONDecodeError:
-            st.error("❌ 中断ファイルの形式が正しくありません")
 
     # 🔧 列数選択
     st.markdown("---")
