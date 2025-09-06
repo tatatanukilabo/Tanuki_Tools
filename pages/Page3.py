@@ -15,7 +15,7 @@ def render():
             gift_data = json.load(uploaded_file)
             st.success("✅ JSONの読み込みに成功しました")
 
-            # 🔧 列数選択（1〜8）
+            # 🔧 列数選択（1〜8） 初期値は2列（index=1）
             st.markdown("---")
             col_count = st.selectbox("表示する列数を選択してください", options=list(range(1, 9)), index=1)
 
@@ -38,7 +38,7 @@ def render():
                 path = os.path.join("assets", "data", filename)
                 try:
                     with open(path, "rb") as f:
-                        img = Image.open(f).convert("RGBA").resize(tile_size)
+                        img = Image.open(io.BytesIO(f.read())).convert("RGBA").resize(tile_size)
 
                         # ✅ 達成ステータスならチェックマークを中央に重ねる
                         if gift_data[filename].get("status") == "達成" and check_img:
@@ -49,19 +49,9 @@ def render():
                         images.append(img)
 
                         with cols[i % col_count]:
-                            # ✅ キャプション生成（拡張子除去 + point/category 表示）
                             display_name = os.path.splitext(filename)[0]
-                            point = gift_data[filename].get("point")
-                            category = gift_data[filename].get("category")
-
-                            caption_parts = [display_name]
-                            if point is not None:
-                                caption_parts.append(f"{point}pt")
-                            if category:
-                                caption_parts.append(f"{category}")
-                            caption = " / ".join(caption_parts)
-
-                            st.image(img, caption=caption, width=150)
+                            st.image(img, width=150)
+                            st.markdown(f"📄 ファイル名: `{display_name}`")
 
                 except Exception as e:
                     with cols[i % col_count]:
