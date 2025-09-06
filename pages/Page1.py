@@ -36,22 +36,14 @@ def render():
         if key not in st.session_state:
             st.session_state[key] = resume_data.get(name, {}).get("goal", 0)
 
-    # 🔍 絞り込み・ソート UI
+    # 🔃 ソート UI（point または category）
     st.markdown("---")
-    st.markdown("### 🔍 絞り込み・ソート")
-
-    categories = sorted(set(g["category"] for g in gift_list))
-    selected_category = st.selectbox("カテゴリで絞り込み", options=["すべて"] + categories)
-
-    sort_order = st.radio("point の並び順", options=["昇順", "降順"])
+    st.markdown("### 🔃 ソート設定")
+    sort_key = st.radio("ソート項目", options=["point", "category"])
+    sort_order = st.radio("並び順", options=["昇順", "降順"])
     reverse = sort_order == "降順"
 
-    # 🎯 フィルタ・ソート処理
-    filtered_list = [
-        g for g in gift_list
-        if selected_category == "すべて" or g["category"] == selected_category
-    ]
-    filtered_list.sort(key=lambda x: x["point"], reverse=reverse)
+    sorted_list = sorted(gift_list, key=lambda x: x[sort_key], reverse=reverse)
 
     # 🔧 列数選択
     st.markdown("---")
@@ -59,7 +51,7 @@ def render():
 
     # 🎨 ギフト画像と目標数入力
     cols = st.columns(col_count)
-    for i, gift in enumerate(filtered_list):
+    for i, gift in enumerate(sorted_list):
         name = gift["filename"]
         display_name = os.path.splitext(name)[0]
         key = f"goal_{name}"
@@ -70,7 +62,6 @@ def render():
                 with cols[i % col_count]:
                     st.image(img, caption=f"{display_name}（{gift['point']}pt / {gift['category']}）", width=150)
 
-                    # ✅ value を指定せず、session_state に自動反映
                     st.number_input(
                         f"{display_name} の目標数",
                         min_value=0,
