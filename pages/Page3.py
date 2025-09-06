@@ -1,5 +1,5 @@
 import streamlit as st
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageOps
 import io
 import json
 import os
@@ -64,19 +64,35 @@ def render():
                             cy = (tile_size[1] - check_img.height) // 2
                             tile.paste(check_img, (cx, cy), check_img)
 
-                        # ✅ 進捗バーを描画
+                        # ✅ 進捗バーを描画（角丸＋余白）
                         goal = gift_data[filename].get("goal", 0)
                         received = gift_data[filename].get("received", 0)
                         progress = min(received / goal, 1.0) if goal > 0 else 0
 
-                        bar_height = 10
                         bar_margin = 5
+                        bar_radius = 5
+                        bar_height = 10
+                        bar_width = tile_size[0] - bar_margin * 2
+                        bar_x = bar_margin
                         bar_y = tile_size[1] - bar_height - bar_margin
-                        bar_width = int(tile_size[0] * progress)
 
                         draw = ImageDraw.Draw(tile)
-                        draw.rectangle([0, bar_y, tile_size[0], bar_y + bar_height], fill=progress_bg_rgb)     # 背景
-                        draw.rectangle([0, bar_y, bar_width, bar_y + bar_height], fill=progress_fill_rgb)     # 進捗
+
+                        # 背景バー（未達部分）
+                        draw.rounded_rectangle(
+                            [bar_x, bar_y, bar_x + bar_width, bar_y + bar_height],
+                            radius=bar_radius,
+                            fill=progress_bg_rgb
+                        )
+
+                        # 進捗バー（達成部分）
+                        fill_width = int(bar_width * progress)
+                        if fill_width > 0:
+                            draw.rounded_rectangle(
+                                [bar_x, bar_y, bar_x + fill_width, bar_y + bar_height],
+                                radius=bar_radius,
+                                fill=progress_fill_rgb
+                            )
 
                         images.append(tile)
 
