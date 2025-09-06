@@ -51,7 +51,7 @@ def render():
                         with cols[i % col_count]:
                             display_name = os.path.splitext(filename)[0]
                             st.image(img, width=150)
-                            st.markdown(f"📄 ファイル名: `{display_name}`")
+                            st.markdown(f"📄 ギフト名: `{display_name}`")
 
                 except Exception as e:
                     with cols[i % col_count]:
