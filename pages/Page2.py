@@ -16,7 +16,7 @@ def render():
 
             # 🔧 列数選択（1〜8）
             st.markdown("---")
-            col_count = st.selectbox("表示する列数を選択してください", options=list(range(1, 9)), index=3)
+            col_count = st.selectbox("表示する列数を選択してください", options=list(range(1, 9)), index=1)
 
             st.markdown("### 🎁 ギフト一覧")
             cols = st.columns(col_count)
@@ -102,3 +102,4 @@ def render():
 
 if __name__ == "__main__":
     render()
+
