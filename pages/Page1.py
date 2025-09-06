@@ -29,6 +29,13 @@ def render():
         st.error(f"画像一覧の読み込みに失敗しました: {e}")
         return
 
+    # 🧠 初期化：全ギフトの目標値を session_state に保持
+    for gift in gift_list:
+        name = gift["filename"]
+        key = f"goal_{name}"
+        if key not in st.session_state:
+            st.session_state[key] = resume_data.get(name, {}).get("goal", 0)
+
     # 🔍 絞り込み・ソート UI
     st.markdown("---")
     st.markdown("### 🔍 絞り込み・ソート")
@@ -57,31 +64,18 @@ def render():
         display_name = os.path.splitext(name)[0]
         key = f"goal_{name}"
         path = os.path.join("assets", "data", name)
-
-        # 初期化（resume_data → session_state）を慎重に
-        if key not in st.session_state:
-            st.session_state[key] = resume_data.get(name, {}).get("goal", 0)
-
         try:
             with open(path, "rb") as f:
                 img = Image.open(io.BytesIO(f.read()))
                 with cols[i % col_count]:
                     st.image(img, caption=f"{display_name}（{gift['point']}pt / {gift['category']}）", width=150)
 
-                    # すでに session_state に値があるなら value を指定しない
-                    if key in st.session_state:
-                        st.number_input(
-                            f"{display_name} の目標数",
-                            min_value=0,
-                            key=key
-                        )
-                    else:
-                        st.number_input(
-                            f"{display_name} の目標数",
-                            min_value=0,
-                            value=resume_data.get(name, {}).get("goal", 0),
-                            key=key
-                        )
+                    # ✅ value を指定せず、session_state に自動反映
+                    st.number_input(
+                        f"{display_name} の目標数",
+                        min_value=0,
+                        key=key
+                    )
         except Exception as e:
             with cols[i % col_count]:
                 st.warning(f"{name} の表示に失敗しました: {e}")
