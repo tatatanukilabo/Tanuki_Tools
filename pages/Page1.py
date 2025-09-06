@@ -36,16 +36,15 @@ def render():
     categories = sorted(set(g["category"] for g in gift_list))
     selected_category = st.selectbox("カテゴリで絞り込み", options=["すべて"] + categories)
 
-    sort_key = st.radio("ソート順", options=["point", "filename"])
-    sort_order = st.radio("昇順 / 降順", options=["昇順", "降順"])
+    sort_order = st.radio("point の並び順", options=["昇順", "降順"])
     reverse = sort_order == "降順"
 
-    # 🎯 フィルタ・ソート処理
+    # 🎯 フィルタ・ソート処理（point固定）
     filtered_list = [
         g for g in gift_list
         if selected_category == "すべて" or g["category"] == selected_category
     ]
-    filtered_list.sort(key=lambda x: x[sort_key], reverse=reverse)
+    filtered_list.sort(key=lambda x: x["point"], reverse=reverse)
 
     # 🔧 列数選択
     st.markdown("---")
@@ -56,16 +55,17 @@ def render():
     cols = st.columns(col_count)
     for i, gift in enumerate(filtered_list):
         name = gift["filename"]
+        display_name = os.path.splitext(name)[0]
         path = os.path.join("assets", "data", name)
         try:
             with open(path, "rb") as f:
                 img = Image.open(io.BytesIO(f.read()))
                 with cols[i % col_count]:
-                    st.image(img, caption=f"{name}（{gift['point']}pt / {gift['category']}）", width=150)
+                    st.image(img, caption=f"{display_name}（{gift['point']}pt / {gift['category']}）", width=150)
 
                     default_goal = resume_data.get(name, {}).get("goal", 0)
                     count = st.number_input(
-                        f"{name} の目標数",
+                        f"{display_name} の目標数",
                         min_value=0,
                         value=default_goal,
                         key=name
