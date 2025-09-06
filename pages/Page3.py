@@ -49,7 +49,19 @@ def render():
                         images.append(img)
 
                         with cols[i % col_count]:
-                            st.image(img, caption=filename, width=150)
+                            # ✅ キャプション生成（拡張子除去 + point/category 表示）
+                            display_name = os.path.splitext(filename)[0]
+                            point = gift_data[filename].get("point")
+                            category = gift_data[filename].get("category")
+
+                            caption_parts = [display_name]
+                            if point is not None:
+                                caption_parts.append(f"{point}pt")
+                            if category:
+                                caption_parts.append(f"{category}")
+                            caption = " / ".join(caption_parts)
+
+                            st.image(img, caption=caption, width=150)
 
                 except Exception as e:
                     with cols[i % col_count]:
