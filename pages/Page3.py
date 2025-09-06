@@ -20,12 +20,6 @@ def render():
             st.markdown("---")
             col_count = st.selectbox("表示する列数を選択してください", options=list(range(1, 9)), index=1)
 
-            st.markdown("### 🎁 ギフト一覧プレビュー")
-            cols = st.columns(col_count)
-
-            tile_size = (150, 150)
-            images = []
-
             # 🎨 ギフト画像の背景色（透過部分に敷く色）
             st.markdown("---")
             st.markdown("### 🎨 ギフト画像の背景色を選択")
@@ -34,11 +28,26 @@ def render():
 
             # 🎨 進捗バーの色設定
             st.markdown("### 🎨 進捗バーの色設定")
-            progress_fill_hex = st.color_picker("進捗バーの色（達成部分）", value="#00BFFF")
+            progress_fill_hex = st.color_picker("進捗バーの色（達成部分）", value="#0000FF")
             progress_bg_hex = st.color_picker("進捗バーの背景色（未達部分）", value="#DDDDDD")
             progress_fill_rgb = tuple(int(progress_fill_hex.lstrip("#")[i:i+2], 16) for i in (0, 2, 4)) + (255,)
             progress_bg_rgb = tuple(int(progress_bg_hex.lstrip("#")[i:i+2], 16) for i in (0, 2, 4)) + (255,)
 
+            # 🎨 枠の色（全体背景）を選択
+            st.markdown("---")
+            st.markdown("### 🎨 進捗確認画像の枠の色を選択")
+            frame_color_hex = st.color_picker("枠の色を選択してください", value="#00BFFF")
+            frame_color_rgb = tuple(int(frame_color_hex.lstrip("#")[i:i+2], 16) for i in (0, 2, 4)) + (255,)
+
+            
+            
+            st.markdown("### 🎁 ギフト一覧プレビュー")
+            cols = st.columns(col_count)
+
+            tile_size = (150, 150)
+            images = []
+
+            
             # ✅ チェックマーク画像の読み込み
             try:
                 check_path = os.path.join("assets", "icons", "check.png")
@@ -104,12 +113,6 @@ def render():
                 except Exception as e:
                     with cols[i % col_count]:
                         st.warning(f"{filename} の表示に失敗しました: {e}")
-
-            # 🎨 枠の色（全体背景）を選択
-            st.markdown("---")
-            st.markdown("### 🎨 進捗確認画像の枠の色を選択")
-            frame_color_hex = st.color_picker("枠の色を選択してください", value="#00BFFF")
-            frame_color_rgb = tuple(int(frame_color_hex.lstrip("#")[i:i+2], 16) for i in (0, 2, 4)) + (255,)
 
             # 🧩 合成画像の生成と表示・ダウンロード
             st.markdown("---")
