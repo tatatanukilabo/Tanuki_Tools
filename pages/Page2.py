@@ -95,7 +95,9 @@ def render():
             st.markdown("---")
             st.markdown("### 📤 結果のJSON表示とダウンロード")
             result_json = json.dumps(result_data, ensure_ascii=False, indent=2)
-            st.code(result_json, language="json")
+
+            # 👇 JSON表示（必要なら再表示可能）
+            # st.code(result_json, language="json")  # ← 再表示したい場合はこの行を有効化
 
             st.download_button(
                 label="📥 結果をJSONでダウンロード",
