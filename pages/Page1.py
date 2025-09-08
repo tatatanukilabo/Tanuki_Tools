@@ -42,7 +42,7 @@ def render():
     st.markdown("---")
     col_count = st.selectbox("表示する列数を選択してください", options=list(range(1, 9)), index=1)
 
-    # 🎁 ギフト一覧（ページネーション）
+    # 🎁 ギフト一覧（段階表示）
     st.markdown("---")
     st.markdown("### 🎁 ギフト一覧")
 
@@ -52,6 +52,7 @@ def render():
 
     if st.button("もっと見る"):
         st.session_state.visible_count += step
+        st.experimental_rerun()
 
     visible_list = sorted_list[:st.session_state.visible_count]
     cols = st.columns(col_count)
