@@ -27,8 +27,10 @@ def render():
         unsafe_allow_html=True
     )
     st.write("開発中。左上のボタンからサイドバーを開いてpage1から順に")
+    st.write("ギフトの数が多く、Page1の動作激重。")
 
 if __name__ == "__main__":
 
     render()
+
 
