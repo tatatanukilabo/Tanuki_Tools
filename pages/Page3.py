@@ -23,7 +23,6 @@ def render():
 
             default_config = {
                 "col_count": 2,
-                "tile_bg_hex": "#FFFFFF",
                 "progress_fill_hex": "#FF0000",
                 "progress_bg_hex": "#DDDDDD",
                 "frame_color_hex": "#00BFFF"
@@ -40,11 +39,6 @@ def render():
             # 🔧 列数選択
             st.markdown("---")
             col_count = st.selectbox("表示する列数を選択してください", options=list(range(1, 9)), index=default_config["col_count"] - 1)
-
-            # 🎨 ギフト画像の背景色
-            st.markdown("### 🎨 ギフト画像の背景色を選択")
-            tile_bg_hex = st.color_picker("ギフト画像の背景色", value=default_config["tile_bg_hex"])
-            tile_bg_rgb = tuple(int(tile_bg_hex.lstrip("#")[i:i+2], 16) for i in (0, 2, 4)) + (255,)
 
             # 🎨 進捗バーの色設定
             st.markdown("### 🎨 進捗バーの色設定")
@@ -63,7 +57,6 @@ def render():
             st.markdown("### 💾 現在の設定を保存")
             config_to_save = {
                 "col_count": col_count,
-                "tile_bg_hex": tile_bg_hex,
                 "progress_fill_hex": progress_fill_hex,
                 "progress_bg_hex": progress_bg_hex,
                 "frame_color_hex": frame_color_hex
@@ -78,6 +71,7 @@ def render():
 
             # ギフト画像処理
             tile_size = (150, 150)
+            tile_bg_rgb = (255, 255, 255, 255)  # 固定背景色（白）
             images = []
 
             # ✅ チェックマーク画像の読み込み
