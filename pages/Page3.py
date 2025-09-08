@@ -69,11 +69,6 @@ def render():
                 mime="application/json"
             )
 
-            # ギフト画像処理
-            tile_size = (150, 150)
-            tile_bg_rgb = (255, 255, 255, 255)  # 固定背景色（白）
-            images = []
-
             # ✅ チェックマーク画像の読み込み
             try:
                 check_path = os.path.join("assets", "icons", "check.png")
@@ -83,7 +78,18 @@ def render():
                 st.warning("⚠️ チェックマーク画像が見つかりません。重ね処理はスキップされます。")
                 check_img = None
 
-            for filename in gift_data:
+            # 🔽 並び替え：カテゴリ昇順 → ポイント昇順
+            sorted_items = sorted(
+                gift_data.items(),
+                key=lambda x: (x[1].get("category", "未分類"), x[1].get("point", 0))
+            )
+
+            # 🎨 タイル生成
+            tile_size = (150, 150)
+            tile_bg_rgb = (255, 255, 255, 255)
+            images = []
+
+            for filename, data in sorted_items:
                 path = os.path.join("assets", "data", filename)
                 try:
                     with open(path, "rb") as f:
@@ -92,13 +98,13 @@ def render():
                     tile = Image.new("RGBA", tile_size, tile_bg_rgb)
                     tile.paste(original, (0, 0), original)
 
-                    if gift_data[filename].get("status") == "達成" and check_img:
+                    if data.get("status") == "達成" and check_img:
                         cx = (tile_size[0] - check_img.width) // 2
                         cy = (tile_size[1] - check_img.height) // 2
                         tile.paste(check_img, (cx, cy), check_img)
 
-                    goal = gift_data[filename].get("goal", 0)
-                    received = gift_data[filename].get("received", 0)
+                    goal = data.get("goal", 0)
+                    received = data.get("received", 0)
                     progress = min(received / goal, 1.0) if goal > 0 else 0
 
                     bar_margin = 5
