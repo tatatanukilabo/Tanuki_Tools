@@ -36,9 +36,9 @@ def render():
                 except json.JSONDecodeError:
                     st.warning("⚠️ 設定ファイルの形式が正しくありません")
 
-            # 🔧 列数選択
+            # 🔧 列数選択（最大32列に拡張）
             st.markdown("---")
-            col_count = st.selectbox("表示する列数を選択してください", options=list(range(1, 9)), index=default_config["col_count"] - 1)
+            col_count = st.selectbox("表示する列数を選択してください", options=list(range(1, 33)), index=default_config["col_count"] - 1)
 
             # 🎨 進捗バーの色設定
             st.markdown("### 🎨 進捗バーの色設定")
