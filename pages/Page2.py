@@ -19,11 +19,15 @@ def render():
             st.markdown("---")
             col_count = st.selectbox("表示する列数を選択してください", options=list(range(1, 9)), index=1)
 
-            # 🎁 ギフトをカテゴリ別にグループ化
+            # 🎁 ギフトをカテゴリ別にグループ化（point昇順でソート）
             grouped = defaultdict(list)
             for filename, data in goal_data.items():
                 category = data.get("category", "未分類")
                 grouped[category].append((filename, data))
+
+            # 各カテゴリ内でpoint昇順に並び替え
+            for category in grouped:
+                grouped[category].sort(key=lambda x: x[1].get("point", 0))
 
             result_data = {}
             total_items = len(goal_data)
@@ -95,9 +99,6 @@ def render():
             st.markdown("---")
             st.markdown("### 📤 結果のJSON表示とダウンロード")
             result_json = json.dumps(result_data, ensure_ascii=False, indent=2)
-
-            # 👇 JSON表示（必要なら再表示可能）
-            # st.code(result_json, language="json")  # ← 再表示したい場合はこの行を有効化
 
             st.download_button(
                 label="📥 結果をJSONでダウンロード",
