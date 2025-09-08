@@ -11,6 +11,23 @@ def safe_int(val):
     except:
         return 0
 
+def calculate_result(gift_list, resume_data):
+    result = {}
+    for name, gift in gift_list.items():
+        goal = st.session_state.get(f"goal_{name}", 0)
+        received = resume_data.get(name, {}).get("received", 0)
+        status = "達成" if received >= goal and goal > 0 else "未達"
+
+        if goal > 0:
+            result[name] = {
+                "goal": goal,
+                "received": received,
+                "status": status,
+                "point": gift.get("point", 0),
+                "category": gift.get("category", "")
+            }
+    return result
+
 def render():
     st.set_page_config(page_title="ギフト目標設定", layout="wide")
     st.markdown("## 🧮 ギフト目標設定")
@@ -48,14 +65,12 @@ def render():
     for name, gift in gift_list.items():
         grouped[gift["category"]].append((name, gift))
 
-    # 各カテゴリ内でポイント昇順にソート
     for category in grouped:
         grouped[category] = sorted(grouped[category], key=lambda x: safe_int(x[1].get("point", 0)))
 
     for category, items in grouped.items():
         st.markdown(f"#### 🏷️ カテゴリ: `{category}`")
         with st.expander(f"{category} のギフト一覧", expanded=False):
-            # 🔢 一括設定用の数値入力とボタン
             bulk_goal = st.number_input(f"{category} の目標数を一括設定", min_value=0, value=0, key=f"bulk_{category}")
             if st.button(f"このカテゴリに一括設定", key=f"bulk_btn_{category}"):
                 for name, _ in items:
@@ -69,7 +84,6 @@ def render():
                 goal_key = f"goal_{name}"
                 path = os.path.join("assets", "data", name)
 
-                # 初期値を session_state に安全に設定
                 if goal_key not in st.session_state:
                     st.session_state[goal_key] = resume_data.get(name, {}).get("goal", 0)
 
@@ -91,34 +105,17 @@ def render():
     st.markdown("---")
     st.markdown("### ✅ 目標数集計結果（JSON）")
 
-    if st.button("🔄 集計を更新"):
-        result = {}
-        for name, gift in gift_list.items():
-            goal = st.session_state.get(f"goal_{name}", 0)
-            received = resume_data.get(name, {}).get("received", 0)
-            status = "達成" if received >= goal and goal > 0 else "未達"
+    result = calculate_result(gift_list, resume_data)
+    st.json(result)
 
-            if goal > 0:
-                result[name] = {
-                    "goal": goal,
-                    "received": received,
-                    "status": status,
-                    "point": gift.get("point", 0),
-                    "category": gift.get("category", "")
-                }
-
-        st.json(result)
-
-        # 📥 JSONダウンロード
-        json_str = json.dumps(result, indent=2, ensure_ascii=False)
-        st.download_button(
-            label="📥 JSONをダウンロード",
-            data=json_str,
-            file_name="gift_goals.json",
-            mime="application/json"
-        )
-    else:
-        st.info("👆 上のボタンを押すと集計結果が表示されます")
+    # 📥 JSONダウンロード
+    json_str = json.dumps(result, indent=2, ensure_ascii=False)
+    st.download_button(
+        label="📥 JSONをダウンロード",
+        data=json_str,
+        file_name="gift_goals.json",
+        mime="application/json"
+    )
 
 # stlite 実行時のエントリポイント
 if __name__ == "__main__":
