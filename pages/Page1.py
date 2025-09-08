@@ -44,8 +44,14 @@ def render():
 
     for category, items in grouped.items():
         st.markdown(f"#### 🏷️ カテゴリ: `{category}`")
-        with st.expander(f"{category} のギフト一覧", expanded=False):  # 初期状態で折りたたみ
-            sorted_items = sorted(items, key=lambda x: int(x[1]["point"]))  # ポイント昇順
+        with st.expander(f"{category} のギフト一覧", expanded=False):
+            # 🔢 一括設定用の数値入力とボタン
+            bulk_goal = st.number_input(f"{category} の目標数を一括設定", min_value=0, value=0, key=f"bulk_{category}")
+            if st.button(f"このカテゴリに一括設定", key=f"bulk_btn_{category}"):
+                for name, _ in items:
+                    st.session_state[f"goal_{name}"] = bulk_goal
+
+            sorted_items = sorted(items, key=lambda x: int(x[1]["point"]))
             cols = st.columns(col_count)
 
             for i, (name, gift) in enumerate(sorted_items):
@@ -53,7 +59,7 @@ def render():
                 goal_key = f"goal_{name}"
                 path = os.path.join("assets", "data", name)
 
-                initial_goal = resume_data.get(name, {}).get("goal", 0)
+                initial_goal = st.session_state.get(goal_key, resume_data.get(name, {}).get("goal", 0))
                 initial_received = resume_data.get(name, {}).get("received", 0)
 
                 try:
