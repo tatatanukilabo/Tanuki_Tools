@@ -19,15 +19,15 @@ def render():
             st.markdown("---")
             col_count = st.selectbox("表示する列数を選択してください", options=list(range(1, 9)), index=1)
 
-            # 🎁 ギフトをカテゴリ別にグループ化（ファイル名順でソート）
+            # 🎁 ギフトをカテゴリ別にグループ化（ポイント昇順でソート）
             grouped = defaultdict(list)
             for filename, data in goal_data.items():
                 category = data.get("category", "未分類")
                 grouped[category].append((filename, data))
 
-            # 各カテゴリ内でファイル名順に並び替え
+            # 各カテゴリ内でポイント昇順に並び替え
             for category in grouped:
-                grouped[category].sort(key=lambda x: x[0])
+                grouped[category].sort(key=lambda x: x[1].get("point", 0))
 
             result_data = {}
             total_items = len(goal_data)
