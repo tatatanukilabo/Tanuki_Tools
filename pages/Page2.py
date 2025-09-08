@@ -104,13 +104,14 @@ def render():
 
             point_ratio = total_received_points / total_goal_points if total_goal_points > 0 else 0
             point_percent = int(point_ratio * 100)
+            safe_point_ratio = min(point_ratio, 1.0)
 
             st.markdown("---")
             st.markdown("### 📊 全体のポイント達成状況")
             overall_ratio = achieved_count / total_items if total_items > 0 else 0
             st.markdown(f"🎯 目標ポイント合計: `{total_goal_points}pt`")
             st.markdown(f"📦 受取ポイント合計: `{total_received_points}pt`")
-            st.progress(point_ratio)
+            st.progress(safe_point_ratio)
             st.markdown(f"💎 ポイント全体達成率: `{point_percent}%`")
             
 
@@ -130,4 +131,5 @@ def render():
 
 if __name__ == "__main__":
     render()
+
 
