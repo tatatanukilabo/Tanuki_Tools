@@ -5,6 +5,12 @@ import json
 import os
 from collections import defaultdict
 
+def safe_int(val):
+    try:
+        return int(val)
+    except:
+        return 0
+
 def render():
     st.set_page_config(page_title="ギフト目標設定", layout="wide")
     st.markdown("## 🧮 ギフト目標設定")
@@ -42,6 +48,10 @@ def render():
     for name, gift in gift_list.items():
         grouped[gift["category"]].append((name, gift))
 
+    # 各カテゴリ内でポイント昇順にソート
+    for category in grouped:
+        grouped[category] = sorted(grouped[category], key=lambda x: safe_int(x[1].get("point", 0)))
+
     for category, items in grouped.items():
         st.markdown(f"#### 🏷️ カテゴリ: `{category}`")
         with st.expander(f"{category} のギフト一覧", expanded=False):
@@ -50,16 +60,19 @@ def render():
             if st.button(f"このカテゴリに一括設定", key=f"bulk_btn_{category}"):
                 for name, _ in items:
                     st.session_state[f"goal_{name}"] = bulk_goal
+                st.experimental_rerun()
 
-            sorted_items = sorted(items, key=lambda x: int(x[1]["point"]))
             cols = st.columns(col_count)
 
-            for i, (name, gift) in enumerate(sorted_items):
+            for i, (name, gift) in enumerate(items):
                 display_name = os.path.splitext(name)[0]
                 goal_key = f"goal_{name}"
                 path = os.path.join("assets", "data", name)
 
-                initial_goal = st.session_state.get(goal_key, resume_data.get(name, {}).get("goal", 0))
+                # 初期値を session_state に安全に設定
+                if goal_key not in st.session_state:
+                    st.session_state[goal_key] = resume_data.get(name, {}).get("goal", 0)
+
                 initial_received = resume_data.get(name, {}).get("received", 0)
 
                 try:
@@ -69,7 +82,7 @@ def render():
                             st.image(img, width=150)
                             st.markdown(f"💎 ポイント: `{gift['point']}pt`")
                             st.markdown(f"🎁 もらった数: `{initial_received}`")
-                            st.number_input(f"{display_name} の目標数", min_value=0, value=initial_goal, key=goal_key)
+                            st.number_input(f"{display_name} の目標数", min_value=0, key=goal_key)
                 except Exception as e:
                     with cols[i % col_count]:
                         st.warning(f"{name} の表示に失敗しました: {e}")
