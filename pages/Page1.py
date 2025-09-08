@@ -44,7 +44,7 @@ def render():
 
     for category, items in grouped.items():
         st.markdown(f"#### 🏷️ カテゴリ: `{category}`")
-        with st.expander(f"{category} のギフト一覧", expanded=True):
+        with st.expander(f"{category} のギフト一覧", expanded=False):  # ← 初期状態で折りたたみ
             sorted_items = sorted(items, key=lambda x: x[1]["point"])  # ポイント昇順
             cols = st.columns(col_count)
 
@@ -62,7 +62,7 @@ def render():
                         with cols[i % col_count]:
                             st.image(img, width=150)
                             st.markdown(f"💎 ポイント: `{gift['point']}pt`")
-                            st.markdown(f"🎁 もらった数: `{initial_received}`")  # 固定表示
+                            st.markdown(f"🎁 もらった数: `{initial_received}`")
                             st.number_input(f"{display_name} の目標数", min_value=0, value=initial_goal, key=goal_key)
                 except Exception as e:
                     with cols[i % col_count]:
