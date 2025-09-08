@@ -20,10 +20,9 @@ def render():
 
             st.markdown("### 🎁 ギフト一覧")
             cols = st.columns(col_count)
-            result_data = {}
 
             total_items = len(goal_data)
-            achieved_count = 0
+            result_data = {}
 
             for i, filename in enumerate(goal_data):
                 path = os.path.join("assets", "data", filename)
@@ -31,18 +30,15 @@ def render():
                     with open(path, "rb") as f:
                         img = Image.open(io.BytesIO(f.read()))
                         with cols[i % col_count]:
-                            # 🎨 表示名（拡張子除去）
                             display_name = os.path.splitext(filename)[0]
                             point = goal_data[filename].get("point", 0)
                             category = goal_data[filename].get("category", "未分類")
+                            goal = goal_data[filename].get("goal", 0)
+                            default_received = goal_data[filename].get("received", 0)
 
-                            # ✅ キャプションを使わず、画像の下に個別表示（細文字）
                             st.image(img, width=150)
                             st.markdown(f"💎 ポイント: `{point}pt`")
                             st.markdown(f"🏷️ カテゴリ: `{category}`")
-
-                            goal = goal_data[filename].get("goal", 0)
-                            default_received = goal_data[filename].get("received", 0)
 
                             input_key = f"received_{filename}"
                             received = st.number_input(
@@ -53,52 +49,66 @@ def render():
                                 key=input_key
                             )
 
-                            status = "達成" if received >= goal and goal > 0 else "未達"
-                            progress_ratio = received / goal if goal > 0 else 0
-                            progress_percent = int(progress_ratio * 100)
-                            safe_ratio = min(progress_ratio, 1.0)
-
-                            st.markdown(f"🎯 目標: `{goal}`")
-                            st.markdown(f"{'✅' if status == '達成' else '❌'} {status}")
-                            st.progress(safe_ratio)
-                            st.markdown(f"📈 達成率: `{progress_percent}%`")
-
+                            # 一時保存（集計は後でボタンで実行）
                             result_data[filename] = {
                                 "goal": goal,
                                 "received": received,
-                                "status": status,
                                 "point": point,
                                 "category": category
                             }
-
-                            if status == "達成":
-                                achieved_count += 1
 
                 except Exception as e:
                     with cols[i % col_count]:
                         st.warning(f"{filename} の表示に失敗しました: {e}")
 
-            # 📊 全体の達成率表示
+            # 🔄 集計ボタン
             st.markdown("---")
-            st.markdown("### 📊 全体の達成状況")
-            overall_ratio = achieved_count / total_items if total_items > 0 else 0
-            overall_percent = int(overall_ratio * 100)
-            st.markdown(f"✅ 達成ギフト数: `{achieved_count}` / `{total_items}`")
-            st.progress(overall_ratio)
-            st.markdown(f"📈 全体達成率: `{overall_percent}%`")
+            st.markdown("### 📊 集計結果")
+            if st.button("🔄 集計を更新"):
+                achieved_count = 0
+                for filename in result_data:
+                    goal = result_data[filename]["goal"]
+                    received = result_data[filename]["received"]
+                    status = "達成" if received >= goal and goal > 0 else "未達"
+                    progress_ratio = received / goal if goal > 0 else 0
+                    progress_percent = int(progress_ratio * 100)
+                    safe_ratio = min(progress_ratio, 1.0)
 
-            # 📤 結果の表示とダウンロード
-            st.markdown("---")
-            st.markdown("### 📤 結果のJSON表示とダウンロード")
-            result_json = json.dumps(result_data, ensure_ascii=False, indent=2)
-            st.code(result_json, language="json")
+                    result_data[filename]["status"] = status
 
-            st.download_button(
-                label="📥 結果をJSONでダウンロード",
-                data=result_json.encode("utf-8"),
-                file_name="gift_result.json",
-                mime="application/json"
-            )
+                    st.markdown(f"#### 🎁 {os.path.splitext(filename)[0]}")
+                    st.markdown(f"🎯 目標: `{goal}`")
+                    st.markdown(f"📦 もらった数: `{received}`")
+                    st.markdown(f"{'✅' if status == '達成' else '❌'} {status}")
+                    st.progress(safe_ratio)
+                    st.markdown(f"📈 達成率: `{progress_percent}%`")
+
+                    if status == "達成":
+                        achieved_count += 1
+
+                # 📊 全体の達成率表示
+                overall_ratio = achieved_count / total_items if total_items > 0 else 0
+                overall_percent = int(overall_ratio * 100)
+                st.markdown("---")
+                st.markdown("### 📊 全体の達成状況")
+                st.markdown(f"✅ 達成ギフト数: `{achieved_count}` / `{total_items}`")
+                st.progress(overall_ratio)
+                st.markdown(f"📈 全体達成率: `{overall_percent}%`")
+
+                # 📤 結果の表示とダウンロード
+                st.markdown("---")
+                st.markdown("### 📤 結果のJSON表示とダウンロード")
+                result_json = json.dumps(result_data, ensure_ascii=False, indent=2)
+                st.code(result_json, language="json")
+
+                st.download_button(
+                    label="📥 結果をJSONでダウンロード",
+                    data=result_json.encode("utf-8"),
+                    file_name="gift_result.json",
+                    mime="application/json"
+                )
+            else:
+                st.info("👆 上のボタンを押すと達成状況が集計されます")
 
         except json.JSONDecodeError:
             st.error("❌ JSONの形式が正しくありません")
