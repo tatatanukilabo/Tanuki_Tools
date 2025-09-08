@@ -40,7 +40,7 @@ def render():
     st.markdown("---")
     col_count = st.selectbox("表示する列数を選択してください", options=list(range(1, 9)), index=1)
 
-    # 🎨 ギフト一覧をカテゴリ別にグループ化（ファイル名順でソート）
+    # 🎨 ギフト一覧をカテゴリ別にグループ化（ポイント昇順でソート）
     st.markdown("---")
     st.markdown("### 🎁 ギフト一覧（カテゴリ別）")
 
@@ -48,9 +48,9 @@ def render():
     for name, gift in gift_list.items():
         grouped[gift["category"]].append((name, gift))
 
-    # 各カテゴリ内でファイル名順にソート
+    # 各カテゴリ内でポイント昇順にソート
     for category in grouped:
-        grouped[category] = sorted(grouped[category], key=lambda x: x[0])
+        grouped[category] = sorted(grouped[category], key=lambda x: safe_int(x[1].get("point", 0)))
 
     for category, items in grouped.items():
         st.markdown(f"#### 🏷️ カテゴリ: `{category}`")
