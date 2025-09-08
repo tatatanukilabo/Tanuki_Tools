@@ -5,35 +5,36 @@ import re
 # スクリプトのあるディレクトリを取得
 script_dir = os.path.dirname(os.path.abspath(__file__))
 
-# JSONデータを格納する辞書
-data = {}
+# 結果を格納する辞書
+result = {}
 
-# ディレクトリを再帰的に走査
-for root, _, files in os.walk(script_dir):
-    for filename in files:
-        if filename.endswith(".png"):
-            name = filename[:-4]  # 拡張子除去
+# ディレクトリを再帰的に探索
+for root, dirs, files in os.walk(script_dir):
+    for file in files:
+        if file.lower().endswith('.png'):
+            # ファイルのフルパス
+            full_path = os.path.join(root, file)
 
-            # 正規表現で category と point を抽出
-            match = re.match(r"(.+?)_(\d+)_\d+", name)
-            if match:
-                category, point = match.groups()
+            # ディレクトリ名（スクリプトディレクトリからの相対パス）
+            rel_dir = os.path.relpath(root, script_dir)
+            category = os.path.basename(rel_dir)
 
-                # 相対パスを取得し、/ 区切りに変換
-                rel_dir = os.path.relpath(root, script_dir)
-                rel_path = os.path.join(rel_dir, filename) if rel_dir != "." else filename
-                rel_path = rel_path.replace("\\", "/")  # Windowsの\を/に変換
+            # ファイル名から数値を抽出（先頭の数値）
+            match = re.match(r'^(\d+)', file)
+            point = int(match.group(1)) if match else None
 
-                data[rel_path] = {
-                    "category": category,
-                    "point": int(point)
-                }
-            else:
-                print(f"⚠️ スキップ: ファイル名の形式が不正 → {filename}")
+            # キーを作成
+            key = f"{category}/{file}"
 
-# JSONファイルの保存先もスクリプトのあるディレクトリに
+            # 辞書に追加
+            result[key] = {
+                "category": category,
+                "point": point
+            }
+
+# JSONとして保存（任意）
 output_path = os.path.join(script_dir, "list.json")
 with open(output_path, "w", encoding="utf-8") as f:
-    json.dump(data, f, ensure_ascii=False, indent=2)
+    json.dump(result, f, indent=2, ensure_ascii=False)
 
-print(f"✅ JSONファイルを作成しました: {output_path}")
+print(f"JSONファイルを保存しました: {output_path}")
