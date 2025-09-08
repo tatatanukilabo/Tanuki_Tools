@@ -8,7 +8,7 @@ from collections import defaultdict
 def render():
     st.set_page_config(page_title="ギフト目標設定", layout="wide")
     st.markdown("## 🧮 ギフト目標設定")
-    st.write("各ギフトの目標数と受け取り数を設定してください。")
+    st.write("各ギフトの目標数を設定してください。")
 
     # 📥 中断ファイルの読み込み
     st.markdown("### 📥 中断ファイル（JSON）を読み込む")
@@ -30,18 +30,11 @@ def render():
         st.error(f"画像一覧の読み込みに失敗しました: {e}")
         return
 
-    # 🔃 ソート UI（point または category）
-    st.markdown("---")
-    st.markdown("### 🔃 ソート設定")
-    sort_key = st.radio("ソート項目", options=["point", "category"])
-    sort_order = st.radio("並び順", options=["昇順", "降順"])
-    reverse = sort_order == "降順"
-
     # 🔧 列数選択（初期値2列）
     st.markdown("---")
     col_count = st.selectbox("表示する列数を選択してください", options=list(range(1, 9)), index=1)
 
-    # 🎨 ギフト一覧をカテゴリ別にグループ化
+    # 🎨 ギフト一覧をカテゴリ別にグループ化（ポイント昇順でソート）
     st.markdown("---")
     st.markdown("### 🎁 ギフト一覧（カテゴリ別）")
 
@@ -52,7 +45,7 @@ def render():
     for category, items in grouped.items():
         st.markdown(f"#### 🏷️ カテゴリ: `{category}`")
         with st.expander(f"{category} のギフト一覧", expanded=True):
-            sorted_items = sorted(items, key=lambda x: x[1][sort_key], reverse=reverse)
+            sorted_items = sorted(items, key=lambda x: x[1]["point"])  # ポイント昇順
             cols = st.columns(col_count)
 
             for i, (name, gift) in enumerate(sorted_items):
