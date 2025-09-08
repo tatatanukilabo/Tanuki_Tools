@@ -25,7 +25,6 @@ def render():
                 category = data.get("category", "未分類")
                 grouped[category].append((filename, data))
 
-            # 各カテゴリ内でポイント昇順に並び替え
             for category in grouped:
                 grouped[category].sort(key=lambda x: x[1].get("point", 0))
 
@@ -94,6 +93,19 @@ def render():
             st.markdown(f"✅ 達成ギフト数: `{achieved_count}` / `{total_items}`")
             st.progress(overall_ratio)
             st.markdown(f"📈 全体達成率: `{overall_percent}%`")
+
+            # 💎 ポイント全体達成率の追加
+            total_goal_points = 0
+            total_received_points = 0
+            for data in result_data.values():
+                total_goal_points += data["goal"] * data["point"]
+                total_received_points += data["received"] * data["point"]
+
+            point_ratio = total_received_points / total_goal_points if total_goal_points > 0 else 0
+            point_percent = int(point_ratio * 100)
+
+            st.markdown(f"💎 ポイント全体達成率: `{point_percent}%`")
+            st.progress(point_ratio)
 
             # 📤 結果の表示とダウンロード
             st.markdown("---")
