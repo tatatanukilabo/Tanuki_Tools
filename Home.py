@@ -7,6 +7,7 @@ def get_base64_image(path):
         data = f.read()
     return base64.b64encode(data).decode()
 
+
 def render():
     image_base64 = get_base64_image("assets/icons/icon.png")
     st.markdown(
