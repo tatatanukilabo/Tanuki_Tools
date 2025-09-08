@@ -15,11 +15,9 @@ def render():
             goal_data = json.load(uploaded_file)
             st.success("✅ JSONの読み込みに成功しました")
 
-            # 🔧 列数選択（1〜8） 初期値は2列（index=1）
             st.markdown("---")
             col_count = st.selectbox("表示する列数を選択してください", options=list(range(1, 9)), index=1)
 
-            # 🎁 ギフトをカテゴリ別にグループ化（ポイント昇順でソート）
             grouped = defaultdict(list)
             for filename, data in goal_data.items():
                 category = data.get("category", "未分類")
@@ -65,10 +63,15 @@ def render():
                                     progress_percent = int(progress_ratio * 100)
                                     safe_ratio = min(progress_ratio, 1.0)
 
+                                    gift_goal_point = goal * point
+                                    gift_received_point = received * point
+
                                     st.markdown(f"🎯 目標: `{goal}`")
-                                    st.markdown(f"{'✅' if status == '達成' else '❌'} {status}")
-                                    st.progress(safe_ratio)
                                     st.markdown(f"📈 達成率: `{progress_percent}%`")
+                                    st.progress(safe_ratio)
+                                    st.markdown(f"{'✅' if status == '達成' else '❌'} {status}")
+                                    st.markdown(f"🎯 目標ポイント: `{gift_goal_point}pt`")
+                                    st.markdown(f"📦 受取ポイント: `{gift_received_point}pt`")
 
                                     result_data[filename] = {
                                         "goal": goal,
@@ -85,7 +88,6 @@ def render():
                             with cols[i % col_count]:
                                 st.warning(f"{filename} の表示に失敗しました: {e}")
 
-            # 📊 全体の達成率表示
             st.markdown("---")
             st.markdown("### 📊 全体の達成状況")
             overall_ratio = achieved_count / total_items if total_items > 0 else 0
@@ -94,7 +96,6 @@ def render():
             st.progress(overall_ratio)
             st.markdown(f"📈 全体達成率: `{overall_percent}%`")
 
-            # 💎 ポイント全体達成率の追加
             total_goal_points = 0
             total_received_points = 0
             for data in result_data.values():
@@ -104,10 +105,11 @@ def render():
             point_ratio = total_received_points / total_goal_points if total_goal_points > 0 else 0
             point_percent = int(point_ratio * 100)
 
+            st.markdown(f"🎯 目標ポイント合計: `{total_goal_points}pt`")
+            st.markdown(f"📦 受取ポイント合計: `{total_received_points}pt`")
             st.markdown(f"💎 ポイント全体達成率: `{point_percent}%`")
             st.progress(point_ratio)
 
-            # 📤 結果の表示とダウンロード
             st.markdown("---")
             st.markdown("### 📤 結果のJSON表示とダウンロード")
             result_json = json.dumps(result_data, ensure_ascii=False, indent=2)
