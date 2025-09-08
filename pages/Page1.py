@@ -50,6 +50,7 @@ def render():
             if st.button(f"このカテゴリに一括設定", key=f"bulk_btn_{category}"):
                 for name, _ in items:
                     st.session_state[f"goal_{name}"] = bulk_goal
+                st.experimental_rerun()
 
             sorted_items = sorted(items, key=lambda x: int(x[1]["point"]))
             cols = st.columns(col_count)
