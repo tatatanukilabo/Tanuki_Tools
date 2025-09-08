@@ -5,6 +5,12 @@ import json
 import os
 from collections import defaultdict
 
+def safe_int(val):
+    try:
+        return int(val)
+    except:
+        return 0
+
 def render():
     st.set_page_config(page_title="ギフト目標設定", layout="wide")
     st.markdown("## 🧮 ギフト目標設定")
@@ -42,6 +48,10 @@ def render():
     for name, gift in gift_list.items():
         grouped[gift["category"]].append((name, gift))
 
+    # 各カテゴリ内でポイント順にソート
+    for category in grouped:
+        grouped[category] = sorted(grouped[category], key=lambda x: safe_int(x[1].get("point", 0)))
+
     for category, items in grouped.items():
         st.markdown(f"#### 🏷️ カテゴリ: `{category}`")
         with st.expander(f"{category} のギフト一覧", expanded=False):
@@ -52,10 +62,9 @@ def render():
                     st.session_state[f"goal_{name}"] = bulk_goal
                 st.experimental_rerun()
 
-            sorted_items = sorted(items, key=lambda x: int(x[1]["point"]))
             cols = st.columns(col_count)
 
-            for i, (name, gift) in enumerate(sorted_items):
+            for i, (name, gift) in enumerate(items):
                 display_name = os.path.splitext(name)[0]
                 goal_key = f"goal_{name}"
                 path = os.path.join("assets", "data", name)
