@@ -3,6 +3,7 @@ from PIL import Image
 import io
 import json
 import os
+from collections import defaultdict
 
 def render():
     st.set_page_config(page_title="ギフト目標設定", layout="wide")
@@ -36,38 +37,43 @@ def render():
     sort_order = st.radio("並び順", options=["昇順", "降順"])
     reverse = sort_order == "降順"
 
-    sorted_list = sorted(gift_list.items(), key=lambda x: x[1][sort_key], reverse=reverse)
-
     # 🔧 列数選択（初期値2列）
     st.markdown("---")
     col_count = st.selectbox("表示する列数を選択してください", options=list(range(1, 9)), index=1)
 
-    # 🎨 ギフト画像と目標数・受け取り数入力
+    # 🎨 ギフト一覧をカテゴリ別にグループ化
     st.markdown("---")
-    st.markdown("### 🎁 ギフト一覧")
-    cols = st.columns(col_count)
+    st.markdown("### 🎁 ギフト一覧（カテゴリ別）")
 
-    for i, (name, gift) in enumerate(sorted_list):
-        display_name = os.path.splitext(name)[0]
-        goal_key = f"goal_{name}"
-        path = os.path.join("assets", "data", name)
+    grouped = defaultdict(list)
+    for name, gift in gift_list.items():
+        grouped[gift["category"]].append((name, gift))
 
-        # 中断データから初期値を取得
-        initial_goal = resume_data.get(name, {}).get("goal", 0)
-        initial_received = resume_data.get(name, {}).get("received", 0)
+    for category, items in grouped.items():
+        st.markdown(f"#### 🏷️ カテゴリ: `{category}`")
+        with st.expander(f"{category} のギフト一覧", expanded=True):
+            sorted_items = sorted(items, key=lambda x: x[1][sort_key], reverse=reverse)
+            cols = st.columns(col_count)
 
-        try:
-            with open(path, "rb") as f:
-                img = Image.open(io.BytesIO(f.read()))
-                with cols[i % col_count]:
-                    st.image(img, width=150)
-                    st.markdown(f"💎 ポイント: `{gift['point']}pt`")
-                    st.markdown(f"🏷️ カテゴリ: `{gift['category']}`")
-                    st.markdown(f"🎁 もらった数: `{initial_received}`")  # ← 固定表示
-                    st.number_input(f"{display_name} の目標数", min_value=0, value=initial_goal, key=goal_key)
-        except Exception as e:
-            with cols[i % col_count]:
-                st.warning(f"{name} の表示に失敗しました: {e}")
+            for i, (name, gift) in enumerate(sorted_items):
+                display_name = os.path.splitext(name)[0]
+                goal_key = f"goal_{name}"
+                path = os.path.join("assets", "data", name)
+
+                initial_goal = resume_data.get(name, {}).get("goal", 0)
+                initial_received = resume_data.get(name, {}).get("received", 0)
+
+                try:
+                    with open(path, "rb") as f:
+                        img = Image.open(io.BytesIO(f.read()))
+                        with cols[i % col_count]:
+                            st.image(img, width=150)
+                            st.markdown(f"💎 ポイント: `{gift['point']}pt`")
+                            st.markdown(f"🎁 もらった数: `{initial_received}`")  # 固定表示
+                            st.number_input(f"{display_name} の目標数", min_value=0, value=initial_goal, key=goal_key)
+                except Exception as e:
+                    with cols[i % col_count]:
+                        st.warning(f"{name} の表示に失敗しました: {e}")
 
     # 📊 集計結果の表示（全ギフト対象）
     st.markdown("---")
@@ -76,7 +82,7 @@ def render():
     result = {}
     for name, gift in gift_list.items():
         goal = st.session_state.get(f"goal_{name}", 0)
-        received = resume_data.get(name, {}).get("received", 0)  # ← 固定値を使用
+        received = resume_data.get(name, {}).get("received", 0)
         status = "達成" if received >= goal and goal > 0 else "未達"
 
         if goal > 0:
