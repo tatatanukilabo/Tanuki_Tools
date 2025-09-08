@@ -69,7 +69,10 @@ def render():
                 goal_key = f"goal_{name}"
                 path = os.path.join("assets", "data", name)
 
-                initial_goal = st.session_state.get(goal_key, resume_data.get(name, {}).get("goal", 0))
+                # 初期値を session_state に安全に設定
+                if goal_key not in st.session_state:
+                    st.session_state[goal_key] = resume_data.get(name, {}).get("goal", 0)
+
                 initial_received = resume_data.get(name, {}).get("received", 0)
 
                 try:
@@ -79,7 +82,7 @@ def render():
                             st.image(img, width=150)
                             st.markdown(f"💎 ポイント: `{gift['point']}pt`")
                             st.markdown(f"🎁 もらった数: `{initial_received}`")
-                            st.number_input(f"{display_name} の目標数", min_value=0, value=initial_goal, key=goal_key)
+                            st.number_input(f"{display_name} の目標数", min_value=0, key=goal_key)
                 except Exception as e:
                     with cols[i % col_count]:
                         st.warning(f"{name} の表示に失敗しました: {e}")
