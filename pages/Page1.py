@@ -91,38 +91,36 @@ def render():
                     with cols[i % col_count]:
                         st.warning(f"{name} の表示に失敗しました: {e}")
 
-    # 📊 集計結果の表示
+    # 📊 集計結果の表示（常時表示）
     st.markdown("---")
     st.markdown("### ✅ 目標数集計結果（JSON）")
 
-    if st.button("🔄 集計を更新"):
-        with st.spinner("集計中です..."):
-            result = {}
-            for name, gift in gift_list.items():
-                goal = st.session_state.get(f"goal_{name}", 0)
-                received = resume_data.get(name, {}).get("received", 0)
-                status = "達成" if received >= goal and goal > 0 else "未達"
+    with st.spinner("集計中です..."):
+        result = {}
+        for name, gift in gift_list.items():
+            goal = st.session_state.get(f"goal_{name}", 0)
+            received = resume_data.get(name, {}).get("received", 0)
+            status = "達成" if received >= goal and goal > 0 else "未達"
 
-                if goal > 0:
-                    result[name] = {
-                        "goal": goal,
-                        "received": received,
-                        "status": status,
-                        "point": gift.get("point", 0),
-                        "category": gift.get("category", "")
-                    }
+            if goal > 0:
+                result[name] = {
+                    "goal": goal,
+                    "received": received,
+                    "status": status,
+                    "point": gift.get("point", 0),
+                    "category": gift.get("category", "")
+                }
 
-            st.json(result)
+        st.json(result)
 
-            json_str = json.dumps(result, indent=2, ensure_ascii=False)
-            st.download_button(
-                label="📥 JSONをダウンロード",
-                data=json_str,
-                file_name="gift_goals.json",
-                mime="application/json"
-            )
-    else:
-        st.info("👆 上のボタンを押すと集計結果が表示されます")
+        # 📥 JSONダウンロード
+        json_str = json.dumps(result, indent=2, ensure_ascii=False)
+        st.download_button(
+            label="📥 JSONをダウンロード",
+            data=json_str,
+            file_name="gift_goals.json",
+            mime="application/json"
+        )
 
 # stlite 実行時のエントリポイント
 if __name__ == "__main__":
