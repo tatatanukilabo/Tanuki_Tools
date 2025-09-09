@@ -11,7 +11,7 @@ result = {}
 # ディレクトリを再帰的に探索
 for root, dirs, files in os.walk(script_dir):
     for file in files:
-        if file.lower().endswith('.png'):
+        if file.lower().endswith('.webp'):
             # ファイルのフルパス
             full_path = os.path.join(root, file)
 
