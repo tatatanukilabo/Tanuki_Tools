@@ -1,6 +1,30 @@
 import streamlit as st
+import base64
+
+def get_base64_image(path):
+    with open(path, "rb") as f:
+        data = f.read()
+    return base64.b64encode(data).decode()
+
 
 def render():
+    image_base64 = get_base64_image("assets/icons/icon.png")
+    st.markdown(
+        f"""
+        <style>
+        .custom-logo {{
+            height: 3em;
+            margin-right: 0.5em;
+            filter: drop-shadow(0 0 6px white);
+        }}
+        </style>
+        <div style="display: flex; align-items: center;">
+            <img src="data:image/png;base64,{image_base64}" class="custom-logo">
+            <h2 style="margin: 0;">たぬきツールズについて</h2>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
     st.markdown("### 📝 ライセンス情報")
     st.markdown("""
     - **著作権** © 2025 tanukitools
@@ -22,10 +46,7 @@ def render():
     st.markdown("### 🤩 Special Thanks")
     st.markdown("""
     本アプリケーションの開発にあたり、以下の方々のご協力をいただきました。
-    - 黒魅月那 さん ()
-    - 緋月悠鮫 さん ()
-    - 瑠璃原すやり さん ()
-    - 蛍火秋那 さん ()
+    - 〇〇〇〇 さん (X:, IRIAM:)
     """)
 
 # stlite 実行時のエントリポイント
