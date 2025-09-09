@@ -1,5 +1,4 @@
 import streamlit as st
-import pages.Page1 as Page1
 import base64
 
 def get_base64_image(path):
