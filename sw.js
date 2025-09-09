@@ -4,9 +4,6 @@ const urlsToCache = [
   "/index.html",
   "/Home.py",
   "/manifest.json",
-  "/pages/Page1.py",
-  "/pages/Page2.py",
-  "/pages/Page3.py",
   "/assets/icons/icon.png",
   "/assets/icons/icon-192.png",
   "/assets/icons/icon-512.png",
@@ -21,6 +18,7 @@ self.addEventListener("install", event => {
       const cache = await caches.open(CACHE_NAME);
       await cache.addAll(urlsToCache);
 
+      // 🔹 list.json に基づく画像ファイルのキャッシュ
       try {
         const res = await fetch("/assets/data/list.json");
         const list = await res.json();
@@ -30,6 +28,16 @@ self.addEventListener("install", event => {
         await cache.addAll(imagePaths);
       } catch (err) {
         console.warn("⚠️ list.json or image fetch failed:", err);
+      }
+
+      // 🔹 pages.json に基づくページファイルのキャッシュ
+      try {
+        const res = await fetch("/pages/pages.json");
+        const pageMap = await res.json();
+        const pagePaths = Object.values(pageMap);
+        await cache.addAll(pagePaths);
+      } catch (err) {
+        console.warn("⚠️ pages.json or page fetch failed:", err);
       }
     })()
   );
