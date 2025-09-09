@@ -16,49 +16,60 @@
         if ("serviceWorker" in navigator) {
           navigator.serviceWorker
             .register("sw.js")
-            .then((reg) => console.log("✅ Service Worker registered:", reg))
-            .catch((err) => console.error("❌ Service Worker registration failed:", err));
+            .then((reg) => {
+              console.log("✅ Service Worker registered:", reg);
+            })
+            .catch((err) => {
+              console.error("❌ Service Worker registration failed:", err);
+            });
         }
+      });
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script src="https://cdn.jsdelivr.net/npm/@stlite/mountable@0.58.3/build/stlite.js"></script>
+    <script>
+      fetch("assets/data/list.json")
+        .then((res) => res.text())
+        .then((listJsonText) => {
+          const giftList = JSON.parse(listJsonText); // { filename: { point, category }, ... }
+          const imageFilenames = Object.keys(giftList); // filenameだけ抽出
 
-        // 必要なファイルをまとめて読み込む
-        Promise.all([
-          fetch("Home.py").then((res) => res.text()),
-          fetch("pages/pages.json").then((res) => res.json()),
-          fetch("assets/data/list.json").then((res) => res.text()),
-          fetch("assets/icons/icon.png").then((res) => res.arrayBuffer()),
-          fetch("assets/icons/check.png").then((res) => res.arrayBuffer())
-        ])
-        .then(([homeCode, pageMap, listJsonText, iconBuffer, checkBuffer]) => {
-          const pageFetches = Object.values(pageMap).map((path) =>
-            fetch(path).then((res) => res.text())
+          const baseFetches = [
+            fetch("Home.py").then((res) => res.text()),
+            fetch("pages/Page1.py").then((res) => res.text()),
+            fetch("pages/Page2.py").then((res) => res.text()),
+            fetch("pages/Page3.py").then((res) => res.text()),
+            fetch("assets/icons/icon.png").then((res) => res.arrayBuffer()),
+            fetch("assets/icons/check.png").then((res) => res.arrayBuffer()),
+            fetch("assets/data/list.json").then(() =>
+              new TextEncoder().encode(listJsonText)
+            )
+          ];
+
+          const imageFetches = imageFilenames.map((name) =>
+            fetch(`assets/data/${name}`).then((res) => res.arrayBuffer())
           );
 
-          Promise.all(pageFetches).then((pageCodes) => {
-            const files = {
-              "Home.py": homeCode,
-              "assets/icons/icon.png": new Uint8Array(iconBuffer),
-              "assets/icons/check.png": new Uint8Array(checkBuffer),
-              "assets/data/list.json": new TextEncoder().encode(listJsonText)
-            };
+          Promise.all([...baseFetches, ...imageFetches]).then(
+            ([HomeCode, page1Code, page2Code, page3Code, iconBuffer, checkBuffer, listJsonEncoded, ...imageBuffers]) => {
+              const iconBytes = new Uint8Array(iconBuffer);
+              const checkBytes = new Uint8Array(checkBuffer);
+              const files = {
+                "Home.py": HomeCode,
+                "pages/Page1.py": page1Code,
+                "pages/Page2.py": page2Code,
+                "pages/Page3.py": page3Code,
+                "assets/icons/icon.png": iconBytes,
+                "assets/icons/check.png": checkBytes,
+                "assets/data/list.json": listJsonEncoded
+              };
 
-            // ページファイルを追加
-            Object.keys(pageMap).forEach((name, i) => {
-              files[name] = pageCodes[i];
-            });
-
-            // 画像ファイルの読み込み
-            const giftList = JSON.parse(listJsonText);
-            const imageFilenames = Object.keys(giftList);
-            const imageFetches = imageFilenames.map((name) =>
-              fetch(`assets/data/${name}`).then((res) => res.arrayBuffer())
-            );
-
-            Promise.all(imageFetches).then((imageBuffers) => {
               imageFilenames.forEach((name, i) => {
                 files[`assets/data/${name}`] = new Uint8Array(imageBuffers[i]);
               });
 
-              // stliteのマウント
               stlite.mount(
                 {
                   entrypoint: "Home.py",
@@ -66,14 +77,9 @@
                 },
                 document.getElementById("root")
               );
-            });
-          });
+            }
+          );
         });
-      });
     </script>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script src="https://cdn.jsdelivr.net/npm/@stlite/mountable@0.58.3/build/stlite.js"></script>
   </body>
 </html>
