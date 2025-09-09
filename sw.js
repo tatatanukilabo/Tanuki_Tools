@@ -1,4 +1,5 @@
 const CACHE_NAME = "stlite-cache-v1";
+
 const urlsToCache = [
   "/index.html",
   "/Home.py",
@@ -16,16 +17,32 @@ const urlsToCache = [
 
 self.addEventListener("install", event => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
+    (async () => {
+      const cache = await caches.open(CACHE_NAME);
+      await cache.addAll(urlsToCache);
+
+      try {
+        const res = await fetch("/assets/data/list.json");
+        const list = await res.json();
+        const imagePaths = Object.keys(list).map(
+          filename => `/assets/data/${filename}`
+        );
+        await cache.addAll(imagePaths);
+      } catch (err) {
+        console.warn("⚠️ list.json or image fetch failed:", err);
+      }
+    })()
   );
 });
 
 self.addEventListener("activate", event => {
   event.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(keys.map(key => {
-        if (key !== CACHE_NAME) return caches.delete(key);
-      }))
+      Promise.all(
+        keys.map(key => {
+          if (key !== CACHE_NAME) return caches.delete(key);
+        })
+      )
     )
   );
   return self.clients.claim();
@@ -36,7 +53,3 @@ self.addEventListener("fetch", event => {
     fetch(event.request).catch(() => caches.match(event.request))
   );
 });
-
-
-
-
