@@ -41,7 +41,7 @@
             fetch("pages/Page1.py").then((res) => res.text()),
             fetch("pages/Page2.py").then((res) => res.text()),
             fetch("pages/Page3.py").then((res) => res.text()),
-            fetch("pages/99_About.py").then((res) => res.text()),
+            fetch("pages/ライセンス情報.py").then((res) => res.text()),
             fetch("assets/icons/icon.png").then((res) => res.arrayBuffer()),
             fetch("assets/icons/check.png").then((res) => res.arrayBuffer()),
             fetch("assets/data/list.json").then(() =>
@@ -54,7 +54,7 @@
           );
 
           Promise.all([...baseFetches, ...imageFetches]).then(
-            ([HomeCode, page1Code, page2Code, page3Code, aboutCode, iconBuffer, checkBuffer, listJsonEncoded, ...imageBuffers]) => {
+            ([HomeCode, page1Code, page2Code, page3Code, licenseCode, iconBuffer, checkBuffer, listJsonEncoded, ...imageBuffers]) => {
               const iconBytes = new Uint8Array(iconBuffer);
               const checkBytes = new Uint8Array(checkBuffer);
               const files = {
@@ -62,7 +62,7 @@
                 "pages/Page1.py": page1Code,
                 "pages/Page2.py": page2Code,
                 "pages/Page3.py": page3Code,
-                "pages/99_About.py": aboutCode,
+                "pages/ライセンス情報.py": licenseCode,
                 "assets/icons/icon.png": iconBytes,
                 "assets/icons/check.png": checkBytes,
                 "assets/data/list.json": listJsonEncoded
