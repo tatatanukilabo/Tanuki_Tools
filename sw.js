@@ -7,6 +7,7 @@ const urlsToCache = [
   "/pages/Page1.py",
   "/pages/Page2.py",
   "/pages/Page3.py",
+  "/pages/99_About.py",
   "/assets/icons/icon.png",
   "/assets/icons/icon-192.png",
   "/assets/icons/icon-512.png",
