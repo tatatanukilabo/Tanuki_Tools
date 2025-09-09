@@ -25,6 +25,7 @@ def render():
         """,
         unsafe_allow_html=True
     )
+    st.markdown("---")
     st.markdown("### 📝 ライセンス情報")
     st.markdown("""
     - **著作権** Copylight © 2025 tanukitools All rights reserved.
